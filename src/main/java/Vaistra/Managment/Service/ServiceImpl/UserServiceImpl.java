@@ -8,7 +8,6 @@ import Vaistra.Managment.Exception.ResourceNotFoundException;
 import Vaistra.Managment.Repository.UserRepo;
 import Vaistra.Managment.Service.UserService;
 import Vaistra.Managment.Utils.AppUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,7 +34,8 @@ public class UserServiceImpl implements UserService {
     public UserDto addUser( UserDto userDto) {
         if (userRepo.existsByEmail(userDto.getEmail()))
             throw new DuplicateEntryException("User with email '" + userDto.getEmail() + "' already exist!");
-        User user = new User();
+      //  User user = new User(UUID.randomUUID().toString(), "Dhara Joshi", "joshidhara2003@gmail.com");
+        User user=appUtils.dtoToUser(userDto);
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setPassword(userDto.getPassword());

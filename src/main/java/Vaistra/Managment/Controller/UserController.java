@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("user")
 public class UserController {
 
     private final UserService userService;
@@ -23,6 +24,7 @@ public class UserController {
 
 
     }
+    @PostMapping
 
     public ResponseEntity<UserDto>addUser(@RequestBody UserDto userDto){
         return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.CREATED);
