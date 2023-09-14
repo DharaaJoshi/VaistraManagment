@@ -18,8 +18,9 @@ public class State {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private int id;
-        @OneToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "country")
+        @ManyToOne(cascade = CascadeType.ALL, targetEntity = Country.class)
+        @JoinColumn(name="country")
+
         private Country country;
         private String state;
         private boolean status;

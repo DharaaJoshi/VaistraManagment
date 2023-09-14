@@ -5,10 +5,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class Country {
 
@@ -22,9 +26,10 @@ public class Country {
     private boolean status=true;
     @Column(name="DELETED")
     private boolean deleted=false;
-    public Country(){
+
+
 
     }
 
 
-}
+
