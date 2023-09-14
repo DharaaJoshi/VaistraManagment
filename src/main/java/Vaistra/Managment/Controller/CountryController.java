@@ -47,13 +47,13 @@ public class CountryController {
     public ResponseEntity<String> deleteCountryById(@PathVariable int id) {
         return new ResponseEntity<>(countryService.deleteCountryById(id), HttpStatus.OK);
     }
-    @PutMapping("softDelete/{id}")
-    public ResponseEntity<String> softDeleteById(@PathVariable int id) {
-        return new ResponseEntity<>(countryService.softDeleteCountryById(id), HttpStatus.OK);
-    }
-    @PutMapping("restore/{id}")
-    public ResponseEntity<String> restoreCountryById(@PathVariable int id) {
-        return new ResponseEntity<>(countryService.restoreCountryById(id), HttpStatus.OK);
-    }
+//    @PutMapping("softDelete/{id}")
+//    public ResponseEntity<String> softDeleteById(@PathVariable int id) {
+//        return new ResponseEntity<>(countryService.softDeleteCountryById(id), HttpStatus.OK);
+//    }
+//    @PutMapping("restore/{id}")
+//    public ResponseEntity<String> restoreCountryById(@PathVariable int id) {
+//        return new ResponseEntity<>(countryService.restoreCountryById(id), HttpStatus.OK);
+//    }
 
 }

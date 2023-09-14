@@ -21,6 +21,6 @@ public class CountryDto {
     @Size(min = 3, message = "Country name should be at least 3 characters!")
     private String country;
     private boolean status=true;
-    private boolean deleted=false;
+
 
 }

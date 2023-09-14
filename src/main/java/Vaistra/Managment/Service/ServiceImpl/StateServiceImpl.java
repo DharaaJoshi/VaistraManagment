@@ -2,20 +2,26 @@ package Vaistra.Managment.Service.ServiceImpl;
 
 import Vaistra.Managment.Dao.Country;
 import Vaistra.Managment.Dao.State;
+import Vaistra.Managment.Dto.CountryDto;
+import Vaistra.Managment.Dto.HttpResponse;
 import Vaistra.Managment.Dto.StateDto;
 import Vaistra.Managment.Dto.UserDto;
+import Vaistra.Managment.Exception.DuplicateEntryException;
 import Vaistra.Managment.Exception.ResourceNotFoundException;
 import Vaistra.Managment.Repository.CountryRepo;
 import Vaistra.Managment.Repository.StateRepo;
 import Vaistra.Managment.Service.StateService;
 import Vaistra.Managment.Utils.AppUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class
-StateServiceImpl implements StateService {
+public class StateServiceImpl implements StateService {
 
 
 
@@ -37,33 +43,61 @@ StateServiceImpl implements StateService {
 
     @Override
     public StateDto addState(StateDto stateDto) {
-       Country country= countryRepo.findById(stateDto.getCountry().getId())
-                .orElseThrow(()->new ResourceNotFoundException("Country with id "+stateDto.getCountry()+" not found!" ));
+       Country country= countryRepo.findById(stateDto.getId())
+                .orElseThrow(()->new ResourceNotFoundException("Country with id "+stateDto.getId()+" not found!" ));
 
 
         State state = new State();
-        state.setState(stateDto.getState());
-
+        state.setStateName(stateDto.getStateName());
         state.setCountry(country);
         state.setStatus(true);
-
         return appUtils.StateToDto(stateRepo.save(state));
 
 
     }
 
-    @Override
-    public StateDto getStateById(int id) {
-        return null;
+
+
+    public StateDto getStateById (int id){
+        return appUtils.StateToDto(stateRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("State with id '" + id + "' Not Found!")));
     }
 
-    @Override
-    public List<StateDto> getAllState(int pageNumber, int pageSize, String sortBy, String sortDirection) {
-        return null;
+
+
+
+    public HttpResponse getAllState(int pageNumber, int pageSize, String sortBy, String sortDirection) {
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<State> pageState = stateRepo.findAll(pageable);
+        List<StateDto> states = appUtils.StatesToDtos(pageState.getContent());
+
+        return HttpResponse.builder()
+                .pageNumber(pageState.getNumber())
+                .pageSize(pageState.getSize())
+                .totalElements(pageState.getTotalElements())
+                .totalPages(pageState.getTotalPages())
+                .isLastPage(pageState.isLast())
+                .data(states)
+                .build();
     }
 
     @Override
     public StateDto updateState(StateDto stateDto, int id) {
-        return null;
+        stateDto.setStateName(stateDto.getStateName().trim().toUpperCase());
+
+        State state = stateRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("State with id '" + id + "' not found!"));
+
+        if(stateRepo.existsByStateName(stateDto.getStateName()))
+        {
+            throw new DuplicateEntryException("State with name '"+stateDto.getStateName()+"' already exist!");
+        }
+
+        state.setStateName(stateDto.getStateName());
+        return appUtils.StateToDto(stateRepo.save(state));
     }
-}
+    }
+

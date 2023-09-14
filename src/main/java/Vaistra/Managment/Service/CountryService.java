@@ -13,8 +13,8 @@ public interface CountryService {
     public List<CountryDto>getCountryByName(int pageNumber,int pageSize,String sortBy, String SortDirection);
     public CountryDto updateCountry(CountryDto country,int id);
     public String deleteCountryById(int id);
-    public String softDeleteCountryById(int id);
-    public String restoreCountryById(int id);
+//    public String softDeleteCountryById(int id);
+//    public String restoreCountryById(int id);
 
 
     List<CountryDto> getAllCountries(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);

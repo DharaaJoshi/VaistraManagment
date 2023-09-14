@@ -88,24 +88,24 @@ public class CountryServiceImpl implements CountryService {
             countryRepo.deleteById(id);
             return "Country with Id '" + id + "' deleted";
         }
-    public String softDeleteCountryById(int id) {
-
-        Country country = countryRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Country with Id '" + id + "' not found!"));
-        country.setDeleted(true);
-        countryRepo.save(country);
-        return "Country with Id '" + id + "' Soft Deleted";
-
-    }
-
-    @Override
-    public String restoreCountryById(int id) {
-        Country country = countryRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Country with Id '" + id + "' not found!"));
-        country.setDeleted(false);
-        countryRepo.save(country);
-       return "Country with id '" + id + "' restored!";
-
-
-    }
+//    public String softDeleteCountryById(int id) {
+//
+//        Country country = countryRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Country with Id '" + id + "' not found!"));
+//        country.setDeleted(true);
+//        countryRepo.save(country);
+//        return "Country with Id '" + id + "' Soft Deleted";
+//
+//    }
+//
+//    @Override
+//    public String restoreCountryById(int id) {
+//        Country country = countryRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Country with Id '" + id + "' not found!"));
+//        country.setDeleted(false);
+//        countryRepo.save(country);
+//       return "Country with id '" + id + "' restored!";
+//
+//
+//    }
 
     @Override
     public List<CountryDto>getAllCountries(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {

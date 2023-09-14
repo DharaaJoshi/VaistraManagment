@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,9 +15,9 @@ public class StateDto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private Country country;
-    private String state;
+    private Integer state_id;
+    private String stateName;
     private boolean status;
+    private Integer id;
 
 }

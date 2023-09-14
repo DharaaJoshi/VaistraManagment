@@ -1,9 +1,11 @@
 package Vaistra.Managment.Utils;
 
 import Vaistra.Managment.Dao.Country;
+import Vaistra.Managment.Dao.District;
 import Vaistra.Managment.Dao.State;
 import Vaistra.Managment.Dao.User;
 import Vaistra.Managment.Dto.CountryDto;
+import Vaistra.Managment.Dto.DistrictDto;
 import Vaistra.Managment.Dto.StateDto;
 import Vaistra.Managment.Dto.UserDto;
 import org.modelmapper.ModelMapper;
@@ -66,5 +68,19 @@ public class AppUtils {
         java.lang.reflect.Type targetListType = new TypeToken<List<StateDto>>() {}.getType();
         return modelMapper.map(states, targetListType);
     }
+
+    public DistrictDto districtToDto(District district) {
+        return modelMapper.map(district, DistrictDto.class);
+    }
+
+    public District dtoToDistrict(DistrictDto dto) {
+        return modelMapper.map(dto, District.class);
+    }
+
+    public List<DistrictDto> districtsToDtos(List<District> districts) {
+        java.lang.reflect.Type targetListType = new TypeToken<List<DistrictDto>>() {}.getType();
+        return modelMapper.map(districts, targetListType);
+    }
+
 
 }

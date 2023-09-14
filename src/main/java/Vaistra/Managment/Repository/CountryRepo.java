@@ -18,5 +18,4 @@ public interface CountryRepo extends JpaRepository<Country,Integer> {
 
     Country findByCountry(String country);
 
-    Optional<Object> findByCountry(Country country);
 }
