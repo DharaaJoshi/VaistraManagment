@@ -1,16 +1,6 @@
 package Vaistra.Managment.Config;
 
 
-
-import Vaistra.Managment.Dao.User;
-import Vaistra.Managment.Exception.ResourceNotFoundException;
-import Vaistra.Managment.Repository.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
-
 //@Component
 //public class UserServiceDetailsImpl implements UserDetailsService {
 //

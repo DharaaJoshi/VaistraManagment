@@ -1,19 +1,14 @@
 package Vaistra.Managment.Utils;
 
-import Vaistra.Managment.Dao.Country;
-import Vaistra.Managment.Dao.District;
-import Vaistra.Managment.Dao.State;
-import Vaistra.Managment.Dao.User;
-import Vaistra.Managment.Dto.CountryDto;
-import Vaistra.Managment.Dto.DistrictDto;
-import Vaistra.Managment.Dto.StateDto;
-import Vaistra.Managment.Dto.UserDto;
+import Vaistra.Managment.MasterCSCV.Dao.*;
+import Vaistra.Managment.MasterCSCV.Dto.*;
+import Vaistra.Managment.MasterCSCV.Dao.*;
+import Vaistra.Managment.MasterCSCV.Dto.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 @Component
 public class AppUtils {
@@ -80,6 +75,25 @@ public class AppUtils {
     public List<DistrictDto> districtsToDtos(List<District> districts) {
         java.lang.reflect.Type targetListType = new TypeToken<List<DistrictDto>>() {}.getType();
         return modelMapper.map(districts, targetListType);
+    }
+    public SubDistrictDto subdistrictToDto(SubDistrict subdistrict) {
+        return modelMapper.map(subdistrict, SubDistrictDto.class);
+    }
+
+    public SubDistrict dtoToSubDistrict(SubDistrictDto dto) {
+        return modelMapper.map(dto, SubDistrict.class);
+    }
+
+    public List<SubDistrictDto> subdistrictsToDtos(List<SubDistrict> subdistricts) {
+        java.lang.reflect.Type targetListType = new TypeToken<List<SubDistrictDto>>() {}.getType();
+        return modelMapper.map(subdistricts, targetListType);
+    }
+    public VillageDto villageDto(Village village) {
+        return modelMapper.map(village, VillageDto.class);
+    }
+    public List<VillageDto> villageToDtos(List<Village> village) {
+        java.lang.reflect.Type targetListType = new TypeToken<List<VillageDto>>() {}.getType();
+        return modelMapper.map(village, targetListType);
     }
 
 
