@@ -34,6 +34,11 @@ public class CountryController {
 
         return new ResponseEntity<>(countryService.getAllCountries(pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
     }
+    @GetMapping("{countryId}")
+    public ResponseEntity<CountryDto> getCountryById(@PathVariable int countryId) {
+        return new ResponseEntity<>(countryService.getCountryById(countryId), HttpStatus.OK);
+    }
+
 
 
 

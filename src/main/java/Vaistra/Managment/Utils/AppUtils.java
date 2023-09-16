@@ -4,6 +4,12 @@ import Vaistra.Managment.MasterCSCV.Dao.*;
 import Vaistra.Managment.MasterCSCV.Dto.*;
 import Vaistra.Managment.MasterCSCV.Dao.*;
 import Vaistra.Managment.MasterCSCV.Dto.*;
+import Vaistra.Managment.MasterMines.Dao.Designation;
+import Vaistra.Managment.MasterMines.Dao.Mineral;
+import Vaistra.Managment.MasterMines.Dao.entity;
+import Vaistra.Managment.MasterMines.Dto.DesignationDto;
+import Vaistra.Managment.MasterMines.Dto.EntityDto;
+import Vaistra.Managment.MasterMines.Dto.MineralDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +101,36 @@ public class AppUtils {
         java.lang.reflect.Type targetListType = new TypeToken<List<VillageDto>>() {}.getType();
         return modelMapper.map(village, targetListType);
     }
+    public MineralDto mineralDto(Mineral mineral) {
+        return modelMapper.map(mineral, MineralDto.class);
+    }
+    public List<MineralDto> mineralToDtos(List<Mineral> minerals) {
+        java.lang.reflect.Type targetListType = new TypeToken<List<Mineral>>() {}.getType();
+        return modelMapper.map(minerals, targetListType);
+    }
 
+
+    public MineralDto  mineralToDto(Mineral mineral) {
+        return modelMapper.map(mineral, MineralDto.class);
+    }
+
+
+    public EntityDto EntityToDto(entity entity) {
+        return modelMapper.map(entity,EntityDto.class );
+
+    }
+
+    public List<EntityDto> entityToDtos(List<entity> entity) {
+        java.lang.reflect.Type targetListType = new TypeToken<List<entity>>() {}.getType();
+        return modelMapper.map(entity, targetListType);
+    }
+
+    public DesignationDto designationToDto(Designation dg) {
+        return modelMapper.map(dg,DesignationDto.class);
+    }
+    public List<DesignationDto> designationToDtos(List<Designation> dg) {
+        java.lang.reflect.Type targetListType = new TypeToken<List<Designation>>() {}.getType();
+        return modelMapper.map(dg, targetListType);
+    }
 
 }
