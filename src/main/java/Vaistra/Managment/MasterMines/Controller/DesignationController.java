@@ -18,6 +18,7 @@ public class DesignationController {
     public DesignationController(DesignationService designationService) {
         this.designationService = designationService;
     }
+    @PostMapping
     public ResponseEntity<DesignationDto>addDesignation(@Valid@RequestBody DesignationDto designation)
     {
         return new ResponseEntity<>(designationService.addDesignation(designation), HttpStatus.CREATED);
