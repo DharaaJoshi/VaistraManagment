@@ -1,20 +1,21 @@
 package Vaistra.Managment.MasterMines.Service;
 
-import Vaistra.Managment.MasterMines.Dto.DesignationDto;
+import Vaistra.Managment.MasterMines.Dto.VehicleDto;
+import Vaistra.Managment.MasterMines.Dto.VehicleDto;
 
 import java.util.List;
 
 public interface VehicleService {
 
 
-    DesignationDto addDesignation(DesignationDto designationDto);
-    DesignationDto getDesignationById(int id);
+    VehicleDto addVehicle(VehicleDto vehicleDto);
+    VehicleDto getVehicleById(int id);
 
 
-    public DesignationDto updateDesignation(DesignationDto designationDto, int id);
+    public VehicleDto updateVehicle(VehicleDto VehicleDto, int id);
 
-    public String deleteDesignationById(int id);
+    public String deleteVehicleById(int id);
 
 
-    List<DesignationDto> getAllDesignation(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
+    List<VehicleDto> getAllVehicle(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
 }

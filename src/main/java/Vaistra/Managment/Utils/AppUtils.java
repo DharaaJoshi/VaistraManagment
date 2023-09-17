@@ -1,17 +1,16 @@
 package Vaistra.Managment.Utils;
 
+import Vaistra.Managment.ManageBank.Dao.Bank;
+import Vaistra.Managment.ManageBank.Dto.BankDto;
 import Vaistra.Managment.MasterCSCV.Dao.*;
 import Vaistra.Managment.MasterCSCV.Dto.*;
 import Vaistra.Managment.MasterCSCV.Dao.*;
 import Vaistra.Managment.MasterCSCV.Dto.*;
-import Vaistra.Managment.MasterMines.Dao.Designation;
-import Vaistra.Managment.MasterMines.Dao.Mineral;
-import Vaistra.Managment.MasterMines.Dao.entity;
-import Vaistra.Managment.MasterMines.Dto.DesignationDto;
-import Vaistra.Managment.MasterMines.Dto.EntityDto;
-import Vaistra.Managment.MasterMines.Dto.MineralDto;
+import Vaistra.Managment.MasterMines.Dao.*;
+import Vaistra.Managment.MasterMines.Dto.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.modelmapper.internal.bytebuddy.description.method.MethodDescription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -133,4 +132,34 @@ public class AppUtils {
         return modelMapper.map(dg, targetListType);
     }
 
+    public VehicleDto vehicleToDto(Vehicle vehicle) {
+        return modelMapper.map(vehicle,VehicleDto.class);
+    }
+    public List<VehicleDto> vehicleToDtos(List<Vehicle> vehicle) {
+        java.lang.reflect.Type targetListType = new TypeToken<List<Vehicle>>() {}.getType();
+        return modelMapper.map(vehicle, targetListType);
+    }
+
+    public EquipmentDto equipmentToDto(Equipment equ) {
+        return modelMapper.map(equ, EquipmentDto.class);
+    }
+    public List<EquipmentDto>equipmentToDtos(List<Equipment>equipment){
+        java.lang.reflect.Type targetListTYpe=new TypeToken<List<Equipment>>(){}.getType();
+        return modelMapper.map(equipment,targetListTYpe);
+    }
+    public boolean isSupportedExtension(String ext){
+        int i = ext.lastIndexOf(".");
+
+        String extension = "";
+
+        if(i != -1){
+            extension = ext.substring(i + 1);
+        }
+
+        return extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg") || extension.equals("JPG") || extension.equals("JPEG")  || extension.equals("PNG");
+    }
+
+    public BankDto bankToDto(Bank save) {
+        return modelMapper.map(save, BankDto.class);
+    }
 }

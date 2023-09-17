@@ -4,4 +4,7 @@ import Vaistra.Managment.MasterMines.Dao.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface VehicleRepo extends JpaRepository<Vehicle,Integer> {
+    boolean existsByVehicle(String vehicle);
+
+    Vehicle findByVehicle(String vehicle);
 }
