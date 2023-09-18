@@ -6,4 +6,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BankBranchRepo extends JpaRepository<BankBranch,Integer> {
+    boolean existsByBranchName(String trim);
+
+    boolean existsByBranchCode(String trim);
+
+    boolean existsByBranchIfsc(String trim);
+
+    boolean existsByBranchMicr(String trim);
 }

@@ -1,6 +1,8 @@
 package Vaistra.Managment.Utils;
 
 import Vaistra.Managment.ManageBank.Dao.Bank;
+import Vaistra.Managment.ManageBank.Dao.BankBranch;
+import Vaistra.Managment.ManageBank.Dto.BankBranchDto;
 import Vaistra.Managment.ManageBank.Dto.BankDto;
 import Vaistra.Managment.MasterCSCV.Dao.*;
 import Vaistra.Managment.MasterCSCV.Dto.*;
@@ -166,5 +168,9 @@ public class AppUtils {
     public List<BankDto> banksToDtos(List<Bank> bank) {
         java.lang.reflect.Type targetListTYpe=new TypeToken<List<Equipment>>(){}.getType();
         return modelMapper.map(bank,targetListTYpe);
+    }
+
+    public BankBranchDto bankBranchToDto(BankBranch save) {
+        return modelMapper.map(save, BankBranchDto.class);
     }
 }
