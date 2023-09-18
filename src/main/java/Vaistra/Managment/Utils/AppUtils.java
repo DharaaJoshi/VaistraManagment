@@ -162,4 +162,9 @@ public class AppUtils {
     public BankDto bankToDto(Bank save) {
         return modelMapper.map(save, BankDto.class);
     }
+
+    public List<BankDto> banksToDtos(List<Bank> bank) {
+        java.lang.reflect.Type targetListTYpe=new TypeToken<List<Equipment>>(){}.getType();
+        return modelMapper.map(bank,targetListTYpe);
+    }
 }

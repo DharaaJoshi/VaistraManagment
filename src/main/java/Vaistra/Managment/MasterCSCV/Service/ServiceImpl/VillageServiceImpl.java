@@ -1,13 +1,11 @@
 package Vaistra.Managment.MasterCSCV.Service.ServiceImpl;
 
-import Vaistra.Managment.MasterCSCV.Dao.SubDistrict;
-import Vaistra.Managment.MasterCSCV.Dao.Village;
+import Vaistra.Managment.MasterCSCV.Dao.*;
+import Vaistra.Managment.MasterCSCV.Dto.SubDistrictDto;
 import Vaistra.Managment.MasterCSCV.Dto.VillageDto;
 import Vaistra.Managment.MasterCSCV.Exception.DuplicateEntryException;
-import Vaistra.Managment.MasterCSCV.Exception.InactiveStatusException;
 import Vaistra.Managment.MasterCSCV.Exception.ResourceNotFoundException;
-import Vaistra.Managment.MasterCSCV.repo.SubDistrictRepo;
-import Vaistra.Managment.MasterCSCV.repo.VillageRepo;
+import Vaistra.Managment.MasterCSCV.repo.*;
 import Vaistra.Managment.MasterCSCV.Service.VillageService;
 import Vaistra.Managment.Utils.AppUtils;
 import org.springframework.data.domain.Page;
@@ -24,10 +22,21 @@ public class VillageServiceImpl implements VillageService {
     private final SubDistrictRepo subDistrictRepo;
     private final VillageRepo villageRepo;
 
-    public VillageServiceImpl(AppUtils appUtils, SubDistrictRepo subDistrictRepo, VillageRepo villageRepo) {
+    private final StateRepo stateRepo;
+    private final CountryRepo countryRepo;
+
+private  final DistrictRepo districtRepo;
+
+
+    public VillageServiceImpl(AppUtils appUtils, SubDistrictRepo subDistrictRepo, VillageRepo villageRepo, StateRepo stateRepo, CountryRepo countryRepo, DistrictRepo districtRepo) {
         this.appUtils = appUtils;
         this.subDistrictRepo = subDistrictRepo;
         this.villageRepo = villageRepo;
+
+        this.stateRepo = stateRepo;
+
+        this.countryRepo = countryRepo;
+        this.districtRepo = districtRepo;
     }
 
     @Override
@@ -38,16 +47,44 @@ public class VillageServiceImpl implements VillageService {
             throw new DuplicateEntryException("Village with name '" + villageDto.getVillageName() + "' already exist!");
 
 
-        SubDistrict subdis = subDistrictRepo.findById(villageDto.getSubdistrictId())
-                .orElseThrow(() -> new ResourceNotFoundException("District with Id '" + villageDto.getSubdistrictId() + " not found!"));
-        if (!subdis.isStatus())
-            throw new InactiveStatusException("District with id '" + villageDto.getVillageName() + "' is not active!");
+        SubDistrict subDis = subDistrictRepo.findById(villageDto.getSubDistrictId())
+                .orElseThrow(() -> new ResourceNotFoundException("sub District with Id '" + villageDto.getSubDistrictId()+ " not found!"));
+
 
 
         Village village = new Village();
         village.setVillageName(villageDto.getVillageName());
-        village.setSdistrict(subdis);
         village.setStatus(true);
+        village.setSubDistrict(subDis);
+        village.setDistrict(subDis.getDistrict());
+        village.setState(subDis.getState());
+        village.setCountry(subDis.getCountry());
+
+
+        return appUtils.villageDto(villageRepo.save(village));
+    }
+    public VillageDto updateVillage(VillageDto villageDto, int id) {
+
+
+        villageDto.setVillageName(villageDto.getVillageName().trim().toUpperCase());
+
+         Village village= villageRepo.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("village  with id '"+id+"' not found!"));
+
+        if(villageRepo.existsByVillageName(villageDto.getVillageName()))
+            throw new DuplicateEntryException("Village with name '"+villageDto.getVillageName()+"' already exist!");
+
+        State state = stateRepo.findById(villageDto.getStateId()).orElseThrow(()->new ResourceNotFoundException("State not found with given id: " + villageDto.getStateId()));
+        Country country = countryRepo.findById(villageDto.getId()).orElseThrow(()->new ResourceNotFoundException("Country not found with given id: " + villageDto.getId()));
+        District district = districtRepo.findById(villageDto.getDistrictId()).orElseThrow(()->new ResourceNotFoundException("District not found with given id: " + villageDto.getDistrictId()));
+        SubDistrict subDistrict = subDistrictRepo.findById(villageDto.getSubDistrictId()).orElseThrow(()->new ResourceNotFoundException("SubDistrict not found with given id: " + villageDto.getSubDistrictName()));
+
+        village.setVillageName(villageDto.getVillageName().trim());
+        village.setStatus(true);
+        village.setSubDistrict(subDistrict);
+        village.setDistrict(district);
+        village.setState(state);
+        village.setCountry(country);
 
         return appUtils.villageDto(villageRepo.save(village));
     }

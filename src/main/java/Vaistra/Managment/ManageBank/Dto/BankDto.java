@@ -27,7 +27,7 @@ public class BankDto {
     @NotBlank(message = "Bank name shouldn't be blank.")
     @Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Bank name should only contain alphabets,numeric and spaces.")
     @Size(min = 2, max = 250, message = "Bank name should have a length between 2 and 250 characters.")
-    private String bankLongName;
+    private String bankName;
 
     private Boolean isActive;
 

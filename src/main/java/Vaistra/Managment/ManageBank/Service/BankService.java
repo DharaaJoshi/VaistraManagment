@@ -10,7 +10,7 @@ import java.util.List;
 public interface BankService {
     public BankDto addBank(BankDto bankDto, MultipartFile file) throws IOException;
 
-    public String updateBank(Integer bankId, BankDto bankDto, MultipartFile file) ;
+    public BankDto updateBank(Integer bankId, BankDto bankDto, MultipartFile file) throws IOException;
 
     public String deleteBank(Integer bankId);
 

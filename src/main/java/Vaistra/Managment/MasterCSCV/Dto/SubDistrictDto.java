@@ -2,6 +2,7 @@ package Vaistra.Managment.MasterCSCV.Dto;
 
 import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,12 +21,24 @@ public class SubDistrictDto {
 
     private boolean status;
 
-    @Min(value = 1, message = "State ID must be a positive integer!")
+    @NotNull(message = "District id shouldn't be null.")
+    @Min(value=0,message = "District Id should be positive digits only.")
     private Integer districtId;
 
+    @Min(value=0,message = "State Id should be positive digits only.")
+    private Integer stateId;
 
-    @JoinColumn(name = "District_name")
-    private String DistrictnName;
+    @Min(value=0,message = "Country Id should be positive digits only.")
+    private Integer id;
+
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Country name should only contain alphabets and spaces.")
+    private String countryName;
+
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "State name should only contain alphabets and spaces.")
+    private String stateName;
+
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "District name should only contain alphabets and spaces.")
+    private String districtName;
 
 
 

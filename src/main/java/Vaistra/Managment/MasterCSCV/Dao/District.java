@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -22,12 +25,22 @@ public class District {
 
     @Column(name = "status")
     private boolean status ;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "district")
+    private List<SubDistrict> subDistricts = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "district")
+    private List<Village> villages = new ArrayList<>();
+//
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "district")
+//    private List<BankBranch> branches = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "state_id")
+    @JoinColumn(name = "stateId")
     private State state;
-    @JoinColumn(name="state_name")
-    private String StateName;
+
+    @ManyToOne
+    @JoinColumn(name = "id")
+    private Country country;
 
 
 }

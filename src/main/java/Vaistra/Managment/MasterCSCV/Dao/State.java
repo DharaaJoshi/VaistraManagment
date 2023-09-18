@@ -30,14 +30,22 @@ public class State {
         @Column(name = "status")
         private boolean status = true;
 
-        @ManyToOne
-        @JoinColumn(name = "country_id")
 
+        @ManyToOne
+        @JoinColumn(name = "id")
         private Country country;
 
-
-        @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "state")
+        @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "state")
         private List<District> districts = new ArrayList<>();
+
+        @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "state")
+        private List<SubDistrict> subDistricts = new ArrayList<>();
+
+        @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "state")
+        private List<Village> villages = new ArrayList<>();
+
+//        @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "state")
+//        private List<BankBranch> branches = new ArrayList<>();
 
 
 

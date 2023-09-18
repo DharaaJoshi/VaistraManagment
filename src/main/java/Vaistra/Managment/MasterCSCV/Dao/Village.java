@@ -24,10 +24,19 @@ public class Village {
     private boolean status ;
 
     @ManyToOne
-    @JoinColumn(name = "subDistrict_id")
-    private SubDistrict sdistrict;
+    @JoinColumn(name = "id")
+    private Country country;
 
-    @JoinColumn(name = "subdstrict_name")
-    private String subdistrictname;
+    @ManyToOne
+    @JoinColumn(name = "stateId")
+    private State state;
+
+    @ManyToOne
+    @JoinColumn(name = "districtId")
+    private District district;
+
+    @ManyToOne
+    @JoinColumn(name = "subDistrictId")
+    private SubDistrict subDistrict;
 
 }

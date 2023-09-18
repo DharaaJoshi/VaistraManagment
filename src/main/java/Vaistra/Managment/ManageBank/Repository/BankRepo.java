@@ -11,4 +11,8 @@ public interface BankRepo extends JpaRepository<Bank,Integer> {
 
 
     boolean existsByBankName(String trim);
+
+    Bank findByBankName(String trim);
+
+    Bank findByBankShortName(String trim);
 }

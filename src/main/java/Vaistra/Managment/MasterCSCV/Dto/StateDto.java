@@ -1,6 +1,7 @@
 package Vaistra.Managment.MasterCSCV.Dto;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,11 +13,20 @@ import lombok.Setter;
 @NoArgsConstructor
 public class StateDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer state_id;
+    @NotEmpty(message = "State name shouldn't be empty.")
+    @NotNull(message = "State name shouldn't be null.")
+    @NotBlank(message = "State name shouldn't be blank.")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "State name should only contain alphabets and spaces.")
+    @Size(min = 3, max = 250, message = "State name should have a length between 3 and 250 characters.")
     private String stateName;
-    private boolean status;
-    private Integer id;
+
+    private Boolean status;
+
+    @NotNull(message = "Country Id shouldn't be null.")
+    @Min(value=0,message = "Country Id should be positive digits only.")
+    private Integer Id;
+
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Country name should only contain alphabets and spaces.")
+    private String country;
 
 }

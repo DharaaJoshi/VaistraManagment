@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -22,8 +25,17 @@ public class SubDistrict {
 
     @Column(name = "Status")
     private boolean Status;
+    @ManyToOne
+    @JoinColumn(name = "stateId")
+    private State state;
+    @ManyToOne
+    @JoinColumn(name = "districtId")
+    private District district;
 
     @ManyToOne
-    @JoinColumn(name = "district_id")
-    private District district;
+    @JoinColumn(name = "id")
+    private Country country;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "subDistrict")
+    private List<Village> villages = new ArrayList<>();
 }
