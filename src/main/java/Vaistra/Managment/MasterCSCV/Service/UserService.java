@@ -5,12 +5,11 @@ import Vaistra.Managment.MasterCSCV.Dto.UserDto;
 import java.util.List;
 
 public interface UserService{
-    UserDto addUser(UserDto userDto);
-    UserDto getUserById(int id);
-    List<UserDto> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDirection);
-    UserDto updateUser(UserDto userDto, int id);
+    public String addUser(UserDto userDto);
 
-    String hardDeleteUserById(int id);
+    public String updateUser(Integer id, UserDto userDto);
 
-   // Boolean verifyToken(String token);
+    public String deleteUser(Integer id);
+
+    public List<UserDto> getUser(int pageNo, int pageSize, String sortBy, String sortDirection);
 }

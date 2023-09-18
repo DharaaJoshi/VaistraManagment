@@ -2,11 +2,13 @@ package Vaistra.Managment.MasterCSCV.Controller;
 
 import Vaistra.Managment.MasterCSCV.Dto.CountryDto;
 import Vaistra.Managment.MasterCSCV.Service.CountryService;
+import io.jsonwebtoken.io.IOException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -34,10 +36,8 @@ public class CountryController {
 
         return new ResponseEntity<>(countryService.getAllCountries(pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
     }
-    @GetMapping("{countryId}")
-    public ResponseEntity<CountryDto> getCountryById(@PathVariable int countryId) {
-        return new ResponseEntity<>(countryService.getCountryById(countryId), HttpStatus.OK);
-    }
+
+
 
 
 
@@ -50,13 +50,9 @@ public class CountryController {
     public ResponseEntity<String> deleteCountryById(@PathVariable int id) {
         return new ResponseEntity<>(countryService.deleteCountryById(id), HttpStatus.OK);
     }
-//    @PutMapping("softDelete/{id}")
-//    public ResponseEntity<String> softDeleteById(@PathVariable int id) {
-//        return new ResponseEntity<>(countryService.softDeleteCountryById(id), HttpStatus.OK);
-//    }
-//    @PutMapping("restore/{id}")
-//    public ResponseEntity<String> restoreCountryById(@PathVariable int id) {
-//        return new ResponseEntity<>(countryService.restoreCountryById(id), HttpStatus.OK);
-//    }
+    @PostMapping("/csv")
+    public ResponseEntity<String> uploadCountryCSV(@RequestParam MultipartFile file) throws IOException, java.io.IOException {
+        return new ResponseEntity<>(countryService.uploadCountryCSV(file),HttpStatus.OK);
+    }
 
 }

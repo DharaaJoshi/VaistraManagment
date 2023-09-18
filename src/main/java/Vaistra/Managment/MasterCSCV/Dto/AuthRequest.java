@@ -10,7 +10,7 @@ import lombok.*;
 public class AuthRequest {
 
     @NotNull(message = "Username should not be null!")
-    private String username;
+    private String email;
 
     @NotNull(message = "Password should not be null!")
     private String password;

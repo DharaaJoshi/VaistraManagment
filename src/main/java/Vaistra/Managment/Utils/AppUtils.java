@@ -173,4 +173,9 @@ public class AppUtils {
     public BankBranchDto bankBranchToDto(BankBranch save) {
         return modelMapper.map(save, BankBranchDto.class);
     }
+
+    public List<BankBranchDto> bankBranchesToDtos(List<BankBranch> content) {
+        java.lang.reflect.Type targetListTYpe=new TypeToken<List<Equipment>>(){}.getType();
+        return modelMapper.map(content,targetListTYpe);
+    }
 }

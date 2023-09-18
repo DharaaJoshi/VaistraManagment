@@ -1,10 +1,13 @@
 package Vaistra.Managment.Config;
 
+import Vaistra.Managment.MasterCSCV.Dao.User;
+import Vaistra.Managment.MasterCSCV.repo.UserRepo;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,22 +18,30 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 public class AppConfig {
 
 
-    @Bean
-    public UserDetailsService userDetailsService(){
-        UserDetails user=User.builder().username("Dhara").password(passwordEncoder().encode("dhara313")).roles("Admin").build();
-        return new InMemoryUserDetailsManager(user);
+    private UserRepo userRepository;
 
+    private PasswordEncoder passwordEncoder;
 
-    }
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    @Autowired
+    public AppConfig(UserRepo userRepository, PasswordEncoder passwordEncoder){
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
-        return builder.getAuthenticationManager();
+    @PostConstruct
+    public void initializeAdminUser() {
+        User user = userRepository.findByEmailIgnoreCase("admin@gmail.com");
+
+        if (user == null) {
+            user = new User();
+
+            user.setEmail("admi@gmail.com");
+            user.setPassword(passwordEncoder.encode("123456789"));
+            user.setName("Admin");
+            userRepository.save(user);
+        }
     }
+
 }
 
 

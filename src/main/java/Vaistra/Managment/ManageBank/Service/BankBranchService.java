@@ -10,7 +10,7 @@ public interface BankBranchService {
 
     public BankBranchDto updateBankBranch(Integer branchId, BankBranchDto bankBranchDto);
 
-    public BankBranchDto deleteBankBranch(Integer branchId);
+    public String deleteBankBranch(Integer branchId);
 
     public HttpResponse getBankBranch(int pageNo, int pageSize, String sortBy, String sortDirection);
 

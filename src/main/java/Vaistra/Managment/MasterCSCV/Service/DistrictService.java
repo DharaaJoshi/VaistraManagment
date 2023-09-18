@@ -1,13 +1,13 @@
 package Vaistra.Managment.MasterCSCV.Service;
 
 import Vaistra.Managment.MasterCSCV.Dto.DistrictDto;
+import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 
 import java.util.List;
 
 public interface DistrictService {
 
     public DistrictDto addDistrict(DistrictDto DistrictDto);
-    public DistrictDto getDistrictById(int id);
 
 
     List<DistrictDto> getAllDistricts(int pageNumber, int pageSize, String sortBy, String sortDirection);
@@ -16,12 +16,14 @@ public interface DistrictService {
 
     public DistrictDto updateDistrict(DistrictDto country, int id);
     public String deleteDistrictById(int id);
-//    public String softDeleteCountryById(int id);
-//    public String restoreCountryById(int id);
 
 
 
     List<DistrictDto> getDistrictsByStateId(int stateId);
 
-    //List<DistrictDto> getDistrictsByCountryId(int countryId);
+
+    HttpResponse getDistrict(int pageNo, int pageSize, String sortBy, String sortDirection);
+
+    HttpResponse getDistrictByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword);
+
 }

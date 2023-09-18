@@ -10,4 +10,9 @@ public interface StateService {
     HttpResponse getAllState(int pageNumber, int pageSize, String sortBy, String sortDirection);
     StateDto updateState(StateDto stateDto, int id);
 
+    String deleteState(Integer stateId);
+
+    HttpResponse getState(int pageNo, int pageSize, String sortBy, String sortDirection);
+
+    HttpResponse getStateByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword);
 }

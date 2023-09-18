@@ -50,37 +50,4 @@ public class Country
 
 
 
-//@Entity
-//@Getter
-//@Setter
-//@AllArgsConstructor
-//@NoArgsConstructor
-//@ToString
-//@Table(name="country")
-//public class Country {
-//
-//    @Id
-//    @GeneratedValue(strategy= GenerationType.IDENTITY)
-//    @Column (name="No")
-//    private int id;
-//    @Column(name="COUNTRY")
-//    private String country;
-//    @Column(name="STATUS")
-//    private boolean status=true;
-//    @Column(name="DELETED")
-//    private boolean deleted=false;
-//
-//     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//             @JoinTable(
-//                     name="state_country",
-//                     joinColumns = @JoinColumn(name = "no"),
-//                     inverseJoinColumns = @JoinColumn(name="id")
-//
-//
-//             )
-//    List<State>states=new ArrayList<>();
-//
-//    }
-//
-
 

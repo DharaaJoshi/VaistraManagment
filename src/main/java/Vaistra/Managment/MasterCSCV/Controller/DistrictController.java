@@ -30,11 +30,7 @@ public class DistrictController {
     }
 
 
-    @GetMapping("{districtId}")
-    public ResponseEntity<DistrictDto> getDistrictById(@PathVariable int districtId)
-    {
-        return new ResponseEntity<>(districtService.getDistrictById(districtId), HttpStatus.FOUND);
-    }
+
 
 
     @GetMapping("all")

@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserDto {
 
-    private int userId;
+    private int id;
 
     @NotEmpty(message = "Email Should not be Empty!")
     @NotBlank(message = "Email Should not be Blank!")
@@ -25,9 +25,8 @@ public class UserDto {
             message = "Password Must be 8 characters Long and contain a-z,A-Z,Special Character and Numbers")
     private String password;
 
-    @NotNull(message = "First Name should not be null!")
-    private String firstName;
+    @NotNull(message = " Name should not be null!")
+    private String name;
 
-    @NotNull(message = "Last Name should not be null!")
-    private String lastName;
+
 }

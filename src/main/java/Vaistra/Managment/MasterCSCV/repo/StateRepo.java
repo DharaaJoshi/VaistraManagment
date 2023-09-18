@@ -16,4 +16,7 @@ public interface StateRepo extends JpaRepository<State,Integer> {
     Page<State> findByStateNameContainingIgnoreCase(String keyword, Pageable p);
 
 
+
+
+    Page<State> findByStateNameOrCountry_CountryOrStateId(Pageable pageable, String keyword, String keyword1, Integer keyword3, Boolean keyword4);
 }

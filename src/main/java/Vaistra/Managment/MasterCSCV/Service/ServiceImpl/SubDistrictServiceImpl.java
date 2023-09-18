@@ -4,10 +4,10 @@ import Vaistra.Managment.MasterCSCV.Dao.Country;
 import Vaistra.Managment.MasterCSCV.Dao.State;
 import Vaistra.Managment.MasterCSCV.Dao.SubDistrict;
 import Vaistra.Managment.MasterCSCV.Dto.DistrictDto;
+import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import Vaistra.Managment.MasterCSCV.Dto.SubDistrictDto;
 import Vaistra.Managment.MasterCSCV.Dao.District;
 import Vaistra.Managment.MasterCSCV.Exception.DuplicateEntryException;
-import Vaistra.Managment.MasterCSCV.Exception.InactiveStatusException;
 import Vaistra.Managment.MasterCSCV.Exception.ResourceNotFoundException;
 import Vaistra.Managment.MasterCSCV.repo.CountryRepo;
 import Vaistra.Managment.MasterCSCV.repo.DistrictRepo;
@@ -122,5 +122,61 @@ public class SubDistrictServiceImpl implements SubDistrictService {
     @Override
     public List<DistrictDto> getDistrictsByStateId(int stateId) {
         return null;
+    }
+    @Override
+    public HttpResponse getSubDistrict(int pageNo, int pageSize, String sortBy, String sortDirection) {
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Page<SubDistrict> subDistrictPage = subDistrictRepo.findAllByDistrict_Status(true,pageable);
+
+        List<SubDistrictDto> SubDistricts = appUtils.subdistrictsToDtos(subDistrictPage.getContent());
+
+        return HttpResponse.builder()
+                .pageNumber(subDistrictPage.getNumber())
+                .pageSize(subDistrictPage.getSize())
+                .totalElements(subDistrictPage.getTotalElements())
+                .totalPages(subDistrictPage.getTotalPages())
+                .isLastPage(subDistrictPage.isLast())
+                .data(SubDistricts)
+                .build();    }
+    @Override
+    public HttpResponse getSubDistrictByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, Integer.MAX_VALUE, sort);
+
+        Integer keyword5 = null;
+        Boolean keyword6 = null;
+
+
+        if(keyword.equalsIgnoreCase("true"))
+            keyword6 = Boolean.TRUE;
+        else if (keyword.equalsIgnoreCase("false")) {
+            keyword6 = Boolean.FALSE;
+        }
+
+        try {
+            keyword5 = Integer.parseInt(keyword);
+        } catch (NumberFormatException e) {
+            keyword5 = null;
+        }
+
+
+        Page<SubDistrict> subDistrictPage = subDistrictRepo.findBySubDistrictNameOrDistrict_DistrictNameOrState_StateNameOrCountry_CountryOrSubDistrictId(pageable,keyword,keyword,keyword,keyword,keyword5,keyword6);
+
+        List<SubDistrictDto> subDistricts = appUtils.subdistrictsToDtos(subDistrictPage.getContent());
+
+        return HttpResponse.builder()
+                .pageNumber(subDistrictPage.getNumber())
+                .pageSize(subDistrictPage.getSize())
+                .totalElements(subDistrictPage.getTotalElements())
+                .totalPages(subDistrictPage.getTotalPages())
+                .isLastPage(subDistrictPage.isLast())
+                .data(subDistricts)
+                .build();
     }
 }

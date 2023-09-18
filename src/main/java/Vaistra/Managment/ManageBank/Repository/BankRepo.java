@@ -4,6 +4,8 @@ import Vaistra.Managment.ManageBank.Dao.Bank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface BankRepo extends JpaRepository<Bank,Integer> {
     boolean existsByBankShortName(String trim);
@@ -15,4 +17,6 @@ public interface BankRepo extends JpaRepository<Bank,Integer> {
     Bank findByBankName(String trim);
 
     Bank findByBankShortName(String trim);
+
+    List<Bank> findAllByIsActive(boolean b);
 }

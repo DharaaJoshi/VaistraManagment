@@ -15,4 +15,7 @@ public interface DistrictRepo extends JpaRepository<District,Integer> {
 
     boolean existsByDistrictName(String name);
     Page<District> findAllByState_Status(Boolean b, Pageable p);
+
+
+    Page<District> findByDistrictNameOrState_StateNameOrCountry_CountryOrDistrictId(Pageable pageable, String keyword, String keyword1, String keyword2, Integer keyword4, Boolean keyword5);
 }

@@ -20,6 +20,7 @@ public class Bank {
     private String bankName;
     @Column(name="Bank short Name")
     private String bankShortName;
+
     @Column(name="Bank Logo")
     private byte[] logo;
     @Column(name = "is active")

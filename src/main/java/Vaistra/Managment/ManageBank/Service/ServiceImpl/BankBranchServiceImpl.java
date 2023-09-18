@@ -14,6 +14,10 @@ import Vaistra.Managment.MasterCSCV.Exception.ResourceNotFoundException;
 import Vaistra.Managment.MasterCSCV.repo.DistrictRepo;
 import Vaistra.Managment.MasterCSCV.repo.StateRepo;
 import Vaistra.Managment.Utils.AppUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -77,18 +81,80 @@ public class BankBranchServiceImpl implements BankBranchService {
 
     @Override
     public BankBranchDto updateBankBranch(Integer branchId, BankBranchDto bankBranchDto) {
-        return null;
+        BankBranch bankBranch = bankBranchRepo.findById(branchId).orElseThrow(()->new ResourceNotFoundException("Bank Branch not found with given id: " + branchId));
+
+        BankBranch bankBranchName= bankBranchRepo.findByBranchName(bankBranchDto.getBranchName().trim());
+
+
+        if(bankBranchName != null)
+            throw new DuplicateEntryException("Branch with name '"+bankBranchDto.getBranchName()+"' already exist!");
+
+
+        BankBranch bankBranchCode = bankBranchRepo.findByBranchCode(bankBranchDto.getBranchCode().trim());
+
+        if(bankBranchCode != null ){
+            throw new DuplicateEntryException("Bank Branch Code: " + bankBranchDto.getBranchCode() + " is already exist!");
+        }
+
+        BankBranch bankBranchIFSCCode= bankBranchRepo.findByBranchIfsc(bankBranchDto.getBranchIfsc().trim());
+
+        if(bankBranchIFSCCode != null ){
+            throw new DuplicateEntryException("Bank Branch IFSC Code: " + bankBranchDto.getBranchIfsc() + " is already exist !");
+        }
+
+        BankBranch bankBranchMICRCode = bankBranchRepo.findByBranchMicr(bankBranchDto.getBranchMicr().trim());
+
+        if(bankBranchMICRCode != null ){
+            throw new DuplicateEntryException("Bank Branch MICR Code: " + bankBranchDto.getBranchMicr() + " is already exist !");
+        }
+        Bank bank = bankRepo.findById(bankBranchDto.getBankId()).orElseThrow(()->new ResourceNotFoundException("Bank not found with  id: " + bankBranchDto.getBankId()));
+        State state = stateRepo.findById(bankBranchDto.getStateId()).orElseThrow(()->new ResourceNotFoundException("State not found with  id: " + bankBranchDto.getStateId()));
+        District district = districtRepo.findById(bankBranchDto.getDistrictId()).orElseThrow(()->new ResourceNotFoundException("District not found with  id: " + bankBranchDto.getDistrictId()));
+
+        bankBranch.setBank(bank);
+        bankBranch.setState(state);
+        bankBranch.setDistrict(district);
+        bankBranch.setBranchName(bankBranchDto.getBranchName().trim());
+        bankBranch.setBranchCode(bankBranchDto.getBranchCode().trim());
+        bankBranch.setBranchAddress(bankBranchDto.getBranchAddress().trim());
+        bankBranch.setBranchIfsc(bankBranchDto.getBranchIfsc().trim());
+        bankBranch.setBranchPhoneNumber(bankBranchDto.getBranchPhoneNumber().trim());
+        bankBranch.setBranchMicr(bankBranchDto.getBranchMicr().trim());
+        bankBranch.setFromTiming(bankBranchDto.getFromTiming());
+        bankBranch.setToTiming(bankBranchDto.getToTiming());
+        bankBranch.setIsActive(bankBranchDto.getIsActive());
+
+        return appUtils.bankBranchToDto(bankBranchRepo.save(bankBranch));
+
+
     }
 
     @Override
-    public BankBranchDto deleteBankBranch(Integer branchId) {
-        return null;
+    public String deleteBankBranch(Integer branchId) {
+        BankBranch bankBranch = bankBranchRepo.findById(branchId).orElseThrow(()->new ResourceNotFoundException("Bank Branch not found with given id: " + branchId));
+        bankBranchRepo.deleteById(branchId);
+        return "Record deleted successfully.";
     }
 
     @Override
     public HttpResponse getBankBranch(int pageNo, int pageSize, String sortBy, String sortDirection) {
-        return null;
-    }
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Page<BankBranch> bankBranchPage = bankBranchRepo.findAll(pageable);
+
+        List<BankBranchDto> bankBranches = appUtils.bankBranchesToDtos(bankBranchPage.getContent());
+
+        return HttpResponse.builder()
+                .pageNumber(bankBranchPage.getNumber())
+                .pageSize(bankBranchPage.getSize())
+                .totalElements(bankBranchPage.getTotalElements())
+                .totalPages(bankBranchPage.getTotalPages())
+                .isLastPage(bankBranchPage.isLast())
+                .data(bankBranches)
+                .build();    }
 
     @Override
     public HttpResponse getBankBranchByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
@@ -97,6 +163,11 @@ public class BankBranchServiceImpl implements BankBranchService {
 
     @Override
     public List<BankBranchDto> getAllActiveBankBranch() {
-        return null;
+        List<BankBranch> bankBranches = bankBranchRepo.findAllByIsActive(true);
+
+        if (bankBranches.isEmpty())
+            throw new ResourceNotFoundException("Bank Branch Data not available...!");
+
+        return appUtils.bankBranchesToDtos(bankBranches);
     }
 }

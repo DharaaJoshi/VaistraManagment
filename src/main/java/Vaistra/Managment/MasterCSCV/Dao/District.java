@@ -1,5 +1,6 @@
 package Vaistra.Managment.MasterCSCV.Dao;
 
+import Vaistra.Managment.ManageBank.Dao.BankBranch;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,9 +31,9 @@ public class District {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "district")
     private List<Village> villages = new ArrayList<>();
-//
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "district")
-//    private List<BankBranch> branches = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "district")
+    private List<BankBranch> branches = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "stateId")

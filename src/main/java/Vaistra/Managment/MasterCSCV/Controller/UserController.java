@@ -25,29 +25,28 @@ public class UserController {
     }
     @PostMapping
 
-    public ResponseEntity<UserDto>addUser(@RequestBody UserDto userDto){
+    public ResponseEntity<String>addUser(@RequestBody UserDto userDto){
         return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.CREATED);
     }
-    @GetMapping("{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable int id)
-    {
-        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.FOUND);
+
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateUser(@PathVariable Integer id, @RequestBody @Valid UserDto userDto){
+        return new ResponseEntity<>(userService.updateUser(id,userDto),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Integer id){
+        return new ResponseEntity<>(userService.deleteUser(id),HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUser(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-                                                    @RequestParam(value = "pageSize", defaultValue = "5", required = false) Integer pageSize,
-                                                    @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
-                                                    @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection)
-    {
-        return new ResponseEntity<>(userService.getAllUsers(pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
+    public ResponseEntity<List<UserDto>> getUser(@RequestParam(value = "pageNo", defaultValue = "0", required = false) Integer pageNo,
+                                                 @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
+                                                 @RequestParam(value = "sortBy", defaultValue = "userId", required = false) String sortBy,
+                                                 @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection){
+        return new ResponseEntity<>(userService.getUser(pageNo,pageSize,sortBy,sortDirection),HttpStatus.OK);
     }
-
-    @PutMapping("{id}")
-    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable int id)
-    {
-        return new ResponseEntity<>(userService.updateUser(userDto, id), HttpStatus.OK);
-    }
-
 
 }

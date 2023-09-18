@@ -145,6 +145,11 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public List<BankDto> getAllActiveBank() {
-        return null;
+        List<Bank> bank = bankRepo.findAllByIsActive(true);
+
+        if (bank.isEmpty())
+            throw new ResourceNotFoundException("Bank Branch Data not available...!");
+
+        return appUtils.banksToDtos(bank);
     }
 }

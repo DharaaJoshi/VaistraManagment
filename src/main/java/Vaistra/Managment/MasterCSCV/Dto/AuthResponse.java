@@ -11,6 +11,6 @@ public class AuthResponse {
 
 
         String token;
-        String username;
+        String name;
     }
 

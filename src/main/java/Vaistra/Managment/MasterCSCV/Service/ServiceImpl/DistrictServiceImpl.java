@@ -4,8 +4,8 @@ import Vaistra.Managment.MasterCSCV.Dao.Country;
 import Vaistra.Managment.MasterCSCV.Dto.DistrictDto;
 import Vaistra.Managment.MasterCSCV.Dao.District;
 import Vaistra.Managment.MasterCSCV.Dao.State;
+import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import Vaistra.Managment.MasterCSCV.Exception.DuplicateEntryException;
-import Vaistra.Managment.MasterCSCV.Exception.InactiveStatusException;
 import Vaistra.Managment.MasterCSCV.Exception.ResourceNotFoundException;
 import Vaistra.Managment.MasterCSCV.Service.DistrictService;
 import Vaistra.Managment.MasterCSCV.repo.CountryRepo;
@@ -62,11 +62,7 @@ public class DistrictServiceImpl implements DistrictService {
         return appUtils.districtToDto(districtRepo.save(district));
     }
 
-    @Override
-    public DistrictDto getDistrictById(int id) {
-        return appUtils.districtToDto(districtRepo.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("District with id '"+id+"' not found!")));
-    }
+
     @Override
     public List<DistrictDto> getAllDistricts(int pageNumber, int pageSize, String sortBy, String sortDirection) {
         Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
@@ -121,12 +117,65 @@ public class DistrictServiceImpl implements DistrictService {
         return appUtils.districtsToDtos(districtRepo.findByState_StateId(stateId));
     }
 
-//    @Override
-//    public List<DistrictDto> getDistrictsByCountryId(int countryId) {
-//        countryRepo.findById(countryId)
-//                .orElseThrow(()->new ResourceNotFoundException("Country with id '"+countryId+"' not found!"));
-//        return appUtils.districtsToDtos(districtRepository.findByState_Country_CountryId(countryId));
-//    }
+@Override
+public HttpResponse getDistrict(int pageNo, int pageSize, String sortBy, String sortDirection) {
+    Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+            Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+    Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+    Page<District> districtPage = districtRepo.findAllByState_Status(true,pageable);
+
+    List<DistrictDto> districts = appUtils.districtsToDtos(districtPage.getContent());
+
+    return HttpResponse.builder()
+            .pageNumber(districtPage.getNumber())
+            .pageSize(districtPage.getSize())
+            .totalElements(districtPage.getTotalElements())
+            .totalPages(districtPage.getTotalPages())
+            .isLastPage(districtPage.isLast())
+            .data(districts)
+            .build();
+}
+
+
+    @Override
+    public HttpResponse getDistrictByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, Integer.MAX_VALUE, sort);
+
+        Integer keyword4 = null;
+        Boolean keyword5 = null;
+
+
+        if(keyword.equalsIgnoreCase("true"))
+            keyword5 = Boolean.TRUE;
+        else if (keyword.equalsIgnoreCase("false")) {
+            keyword5 = Boolean.FALSE;
+        }
+
+        try {
+            keyword4 = Integer.parseInt(keyword);
+        } catch (NumberFormatException e) {
+            keyword4 = null;
+        }
+
+
+        Page<District> districtPage = districtRepo.findByDistrictNameOrState_StateNameOrCountry_CountryOrDistrictId(pageable,keyword,keyword,keyword,keyword4,keyword5);
+
+        List<DistrictDto> districts = appUtils.districtsToDtos(districtPage.getContent());
+
+        return HttpResponse.builder()
+                .pageNumber(districtPage.getNumber())
+                .pageSize(districtPage.getSize())
+                .totalElements(districtPage.getTotalElements())
+                .totalPages(districtPage.getTotalPages())
+                .isLastPage(districtPage.isLast())
+                .data(districts)
+                .build();
+    }
 
 
 }

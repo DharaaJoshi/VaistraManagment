@@ -1,8 +1,10 @@
 package Vaistra.Managment.MasterCSCV.Controller;
 
+import Vaistra.Managment.MasterCSCV.Dao.User;
 import Vaistra.Managment.MasterCSCV.Dto.AuthRequest;
 import Vaistra.Managment.MasterCSCV.Dto.AuthResponse;
 import Vaistra.Managment.Security.JwtHelper;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,39 +24,40 @@ public class AuthController {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
     @Autowired
-    private AuthenticationManager authManager;
+    private AuthenticationManager manager;
+
     @Autowired
-    private JwtHelper helper;
-    private Logger logger= LoggerFactory.getLogger(AuthController.class);
+    private  JwtHelper jwtService;
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse>login(@RequestBody AuthRequest request){
-        this.doAuthenticate(request.getUsername(),request.getPassword());
+    private Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-        UserDetails userDetails= userDetailsService.loadUserByUsername(request.getUsername());
-        String token =this.helper.generateToken(userDetails);
+    @PostMapping("login")
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
 
-        AuthResponse response= AuthResponse.builder().token(token).username(userDetails.getUsername()).build();
+        this.doAuthenticate(request.getEmail(), request.getPassword());
+
+
+        User userDetails = (User) userDetailsService.loadUserByUsername(request.getEmail());
+        String token = this.jwtService.generateToken(userDetails);
+
+        AuthResponse response = AuthResponse.builder()
+                .token(token)
+                .name(userDetails.getName()).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private void doAuthenticate(String email, String password) {
+    private void doAuthenticate(String username, String password) {
 
-        UsernamePasswordAuthenticationToken authentication=new UsernamePasswordAuthenticationToken(email,password);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, password);
         try {
-            authManager.authenticate(authentication);
+            manager.authenticate(authentication);
 
 
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException(" Invalid Username or Password  !!");
+            throw new BadCredentialsException("Invalid Credential");
         }
-
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public String exceptionHandler() {
-        return "Credentials Invalid !!";
 
     }
 }
