@@ -1,5 +1,6 @@
 package Vaistra.Managment.ManageBank.Dto;
 
+import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class BankBranchDto {
     @NotEmpty(message = "Branch name shouldn't be empty.")
     @NotNull(message = "Branch name  shouldn't be null.")
     @NotBlank(message = "Branch name shouldn't be blank.")
-    @Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Branch name should only contain alphabets,numeric and spaces.")
+    @Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Branch name should only contain alphabets,numeric .")
     @Size(min = 2, max = 250, message = "Branch name should have a length between 2 and 250 characters.")
     private String branchName;
 
@@ -34,7 +35,6 @@ public class BankBranchDto {
     @NotEmpty(message = "Branch IFSC shouldn't be empty.")
     @NotNull(message = "Branch IFSC  shouldn't be null.")
     @NotBlank(message = "Branch IFSC shouldn't be blank.")
-    @Pattern(regexp = "^[A-Z]{4}0[A-Z0-9]{6}$", message = "Invalid IFSC Code.")
     private String branchIfsc;
 
     @NotEmpty(message = "Phone Number shouldn't be empty.")
@@ -58,21 +58,19 @@ public class BankBranchDto {
 
     @Min(value=0,message = "Bank Id should be positive digits only.")
     private Integer bankId;
-
-    @Pattern(regexp = "^[a-zA-Z09\\s]+$", message = "Bank name should only contain alphabets,numeric and spaces.")
-    private String bankName;
+//   @Pattern(regexp = "^[a-zA-Z09\\s]+$", message = "Bank name should only contain alphabets,numeric ")
+//   private String bankName;
 
     @Min(value=0,message = "State Id should be positive digits only.")
     private Integer stateId;
 
-    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "State name should only contain alphabets and spaces.")
-    private String stateName;
+//    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "State name should only contain alphabets .")
+//    private String stateName;
 
     @Min(value=0,message = "District Id should be positive digits only.")
-    private Integer districtId;
-
-    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "District name should only contain alphabets and spaces.")
-    private String districtName;
+   private Integer districtId;
+//   @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "District name should only contain alphabets and spaces.")
+//    private String districtName;
 
     private Boolean isActive;
 

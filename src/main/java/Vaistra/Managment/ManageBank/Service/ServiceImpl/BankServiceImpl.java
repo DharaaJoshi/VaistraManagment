@@ -31,35 +31,33 @@ public class BankServiceImpl implements BankService {
     }
     @Transactional
     @Override
-    public BankDto addBank(BankDto bankDto, MultipartFile file) throws IOException {
-        String extension = file.getOriginalFilename();
+    public BankDto addBank(BankDto bankDto/* MultipartFile file*/) throws IOException, FileSizeExceedException {
+       // String extension = file.getOriginalFilename();
         if(bankRepo.existsByBankShortName(bankDto.getBankShortName().trim())){
             throw new DuplicateEntryException("Short name: " + bankDto.getBankShortName() + " already exist .");
         }
 
         if(bankRepo.existsByBankName(bankDto.getBankName().trim())){
-            throw new DuplicateEntryException("Long name: " + bankDto.getBankName() + " already exist .");
+            throw new DuplicateEntryException("Long name: " + bankDto.getBankName() + " already exist ");
         }
-        if(file.isEmpty()){
-            throw new ResourceNotFoundException("Logo file not found.");
-        }
+//
+//        assert extension != null;
+//        if(!appUtils.isSupportedExtension(extension)){
+//            throw new ResourceNotFoundException("Only JPG,PNG allowed.");
+//        }
 
-        assert extension != null;
-        if(!appUtils.isSupportedExtension(extension)){
-            throw new ResourceNotFoundException("Only JPG,PNG allowed..!");
-        }
+
 
 
         Bank bank = new Bank();
 
-        bank.setLogo(file.getBytes());
+//        bank.setLogo();
         bank.setBankName(bankDto.getBankName().trim());
         bank.setBankShortName(bankDto.getBankShortName().trim());
         bank.setIsActive(bankDto.getIsActive());
 
+       return appUtils.bankToDto(bankRepo.save(bank)) ;
 
-
-        return appUtils.bankToDto(bankRepo.save(bank));
     }
 
     @Override
@@ -80,9 +78,7 @@ public class BankServiceImpl implements BankService {
             throw new DuplicateEntryException("Bank short name : " + bankDto.getBankShortName() + " is already exist !");
         }
 
-        if(file.isEmpty()){
-            throw new ResourceNotFoundException("Logo file not found...!");
-        }
+
 
         assert extension != null;
         if(!appUtils.isSupportedExtension(extension)){
@@ -91,7 +87,7 @@ public class BankServiceImpl implements BankService {
 
 
 
-        bank.setLogo(file.getBytes());
+       // bank.setLogo(file.getBytes());
         bank.setBankName(bankDto.getBankName().trim());
         bank.setBankShortName(bankDto.getBankShortName().trim());
         bank.setIsActive(bankDto.getIsActive());
@@ -140,7 +136,7 @@ public class BankServiceImpl implements BankService {
     @Override
     public byte[] getBankLogo(Integer bankId) {
         Bank bank = bankRepo.findById(bankId).orElseThrow(()->new ResourceNotFoundException("Bank not found with given id: " + bankId));
-        return bank.getLogo();
+        return null;
     }
 
     @Override

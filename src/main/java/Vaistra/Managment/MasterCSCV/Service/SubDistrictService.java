@@ -3,6 +3,7 @@ package Vaistra.Managment.MasterCSCV.Service;
 import Vaistra.Managment.MasterCSCV.Dto.DistrictDto;
 import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import Vaistra.Managment.MasterCSCV.Dto.SubDistrictDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,6 +32,8 @@ public interface SubDistrictService {
     HttpResponse getSubDistrict(int pageNo, int pageSize, String sortBy, String sortDirection);
 
     HttpResponse getSubDistrictByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword);
+
+
 
     //List<DistrictDto> getDistrictsByCountryId(int countryId);
     }

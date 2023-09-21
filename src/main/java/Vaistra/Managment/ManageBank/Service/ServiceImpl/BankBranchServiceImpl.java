@@ -57,8 +57,8 @@ public class BankBranchServiceImpl implements BankBranchService {
         if(bankBranchRepo.existsByBranchMicr(bankBranchDto.getBranchMicr().trim())){
             throw new DuplicateEntryException("Branch MICR Code: " + bankBranchDto.getBranchMicr() + " already exist .");
         }
-        BankBranch bankBranch = new BankBranch();
 
+        BankBranch bankBranch = new BankBranch();
         Bank bank = bankRepo.findById(bankBranchDto.getBankId()).orElseThrow(()->new ResourceNotFoundException("Bank not found with given id: " + bankBranchDto.getBankId()));
         State state = stateRepo.findById(bankBranchDto.getStateId()).orElseThrow(()->new ResourceNotFoundException("State not found with given id: " + bankBranchDto.getStateId()));
         District district = districtRepo.findById(bankBranchDto.getDistrictId()).orElseThrow(()->new ResourceNotFoundException("District not found with given id: " + bankBranchDto.getDistrictId()));
@@ -66,12 +66,12 @@ public class BankBranchServiceImpl implements BankBranchService {
         bankBranch.setBank(bank);
         bankBranch.setState(state);
         bankBranch.setDistrict(district);
-        bankBranch.setBranchName(bankBranchDto.getBranchName().trim());
-        bankBranch.setBranchCode(bankBranchDto.getBranchCode().trim());
-        bankBranch.setBranchAddress(bankBranchDto.getBranchAddress().trim());
+        bankBranch.setBranchName(bankBranchDto.getBranchName());
+        bankBranch.setBranchCode(bankBranchDto.getBranchCode());
+        bankBranch.setBranchAddress(bankBranchDto.getBranchAddress());
         bankBranch.setBranchIfsc(bankBranchDto.getBranchIfsc().trim());
-        bankBranch.setBranchPhoneNumber(bankBranchDto.getBranchPhoneNumber().trim());
-        bankBranch.setBranchMicr(bankBranchDto.getBranchMicr().trim());
+        bankBranch.setBranchPhoneNumber(bankBranchDto.getBranchPhoneNumber());
+        bankBranch.setBranchMicr(bankBranchDto.getBranchMicr());
         bankBranch.setFromTiming(bankBranchDto.getFromTiming());
         bankBranch.setToTiming(bankBranchDto.getToTiming());
         bankBranch.setIsActive(bankBranchDto.getIsActive());

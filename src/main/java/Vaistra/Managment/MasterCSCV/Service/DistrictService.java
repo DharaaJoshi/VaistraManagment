@@ -2,6 +2,7 @@ package Vaistra.Managment.MasterCSCV.Service;
 
 import Vaistra.Managment.MasterCSCV.Dto.DistrictDto;
 import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,4 +27,5 @@ public interface DistrictService {
 
     HttpResponse getDistrictByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword);
 
+    String uploadDistrictCSV(MultipartFile file);
 }

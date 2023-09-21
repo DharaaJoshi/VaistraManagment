@@ -12,13 +12,18 @@ import Vaistra.Managment.MasterCSCV.repo.CountryRepo;
 import Vaistra.Managment.MasterCSCV.repo.DistrictRepo;
 import Vaistra.Managment.MasterCSCV.repo.StateRepo;
 import Vaistra.Managment.Utils.AppUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class DistrictServiceImpl implements DistrictService {
@@ -176,6 +181,62 @@ public HttpResponse getDistrict(int pageNo, int pageSize, String sortBy, String 
                 .data(districts)
                 .build();
     }
+    @Override
+    public String uploadDistrictCSV(MultipartFile file) {
 
+        if(!Objects.equals(file.getContentType(), "text/csv")){
+            throw new IllegalArgumentException("Invalid file type. CSV file.");
+        }
+
+        try {
+            List<District> districts = CSVParser.parse(file.getInputStream(), Charset.defaultCharset(), CSVFormat.DEFAULT)
+                    .stream().skip(1)
+                    .map(record -> {
+                        District district = new District();
+                        district.setDistrictName(record.get(2).trim());
+                        district.setStatus(Boolean.parseBoolean(record.get(3)));
+
+
+                        String stateName = record.get(1).trim();
+
+                        State state = stateRepo.findByStateName(stateName);
+
+                        if(state == null){
+                            state = new State();
+                            state.setStateName(stateName.trim());
+                            state.setStatus(true);
+
+                            String countryName= record.get(0).trim();
+
+                            Country country = countryRepo.findByCountry(countryName);
+
+                            if (country == null) {
+                                country = new Country();
+                                country.setCountry(countryName.trim());
+                                country.setStatus(true);
+                                countryRepo.save(country);
+                            }
+
+                            state.setCountry(country);
+                            stateRepo.save(state);
+
+                        }
+
+
+                        district.setState(state);
+                        district.setCountry(state.getCountry());
+                        return district;
+                    })
+                    .toList();
+            districtRepo.saveAll(districts);
+
+            return "CSV file uploaded successfully. records uploaded.";
+
+
+        }catch (Exception e){
+            return e.getMessage();
+        }
+
+    }
 
 }

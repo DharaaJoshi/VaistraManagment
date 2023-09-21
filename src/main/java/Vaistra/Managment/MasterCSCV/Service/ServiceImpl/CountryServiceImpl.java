@@ -95,39 +95,31 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public String uploadCountryCSV(MultipartFile file) throws IOException {
 
-        if (file.isEmpty()) {
-            throw new ResourceNotFoundException("Country CSV File not found...!");
-        }
-        if (!Objects.equals(file.getContentType(), "text/csv")) {
-            throw new IllegalArgumentException("Invalid file type. Please upload a CSV file.");
+
+        if(!Objects.equals(file.getContentType(), "csv")){
+            throw new IllegalArgumentException("Invalid file type.upload a CSV file only.");
         }
 
         try {
             List<Country> countries = CSVParser.parse(file.getInputStream(), Charset.defaultCharset(), CSVFormat.DEFAULT)
-                    .stream().skip(1) // Skip the first row
+                    .stream().skip(1)
                     .map(record -> {
                         Country country = new Country();
-                        country.setCountry(record.get(0).trim()); // Assuming the first column is "country"
-                        country.setStatus(Boolean.parseBoolean(record.get(1))); // Assuming the second column is "isActive"
+                        country.setCountry(record.get(0).trim());
+                        country.setStatus(Boolean.parseBoolean(record.get(1)));
                         return country;
                     })
                     .toList();
 
-            // Filter out duplicates by country name
-            List<Country> nonDuplicateCountries = countries.stream()
-                    .filter(distinctByKey(Country::getCountry))
-                    .toList();
 
 
-            long uploadedRecordCount = nonDuplicateCountries.size();
-            countryRepo.saveAll(nonDuplicateCountries);
+            countryRepo.saveAll(countries);
 
-            return "CSV file uploaded successfully. " + uploadedRecordCount + " records uploaded.";
+            return "CSV file uploaded successfully. " ;
 
-        } catch (Exception e) {
+        }catch (Exception e){
             return e.getMessage();
         }
-
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {

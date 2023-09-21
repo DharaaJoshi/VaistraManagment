@@ -3,9 +3,11 @@ package Vaistra.Managment.MasterCSCV.Controller;
 import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import Vaistra.Managment.MasterCSCV.Dto.StateDto;
 import Vaistra.Managment.MasterCSCV.Service.StateService;
+import io.jsonwebtoken.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("state")
@@ -38,5 +40,9 @@ public class StateController {
     @PutMapping("{state_id}")
     public ResponseEntity<StateDto> updateState(@RequestBody StateDto state, @PathVariable int state_id) {
         return new ResponseEntity<>(stateService.updateState(state, state_id), HttpStatus.ACCEPTED);
+    }
+    @PostMapping("/csv")
+    public ResponseEntity<String> uploadStateCSV(@RequestParam MultipartFile file) throws IOException, java.io.IOException {
+        return new ResponseEntity<>(stateService.uploadStateCSV(file),HttpStatus.OK);
     }
 }

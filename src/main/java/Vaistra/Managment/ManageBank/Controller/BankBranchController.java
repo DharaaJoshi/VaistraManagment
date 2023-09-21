@@ -22,7 +22,7 @@ public class BankBranchController {
         this.bankBranchService = bankBranchService;
     }
     @PostMapping
-    public ResponseEntity<BankBranchDto> addBank(@RequestBody @Valid BankBranchDto bankBranchDto) {
+    public ResponseEntity<BankBranchDto> addBankBranch(@RequestBody @Valid BankBranchDto bankBranchDto){
         return new ResponseEntity<>(bankBranchService.addBankBranch(bankBranchDto), HttpStatus.OK);
     }
     @PutMapping("/{id}")

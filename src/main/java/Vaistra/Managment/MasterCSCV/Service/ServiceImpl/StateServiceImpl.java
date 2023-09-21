@@ -10,13 +10,18 @@ import Vaistra.Managment.MasterCSCV.repo.CountryRepo;
 import Vaistra.Managment.MasterCSCV.repo.StateRepo;
 import Vaistra.Managment.MasterCSCV.Service.StateService;
 import Vaistra.Managment.Utils.AppUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class StateServiceImpl implements StateService {
@@ -158,6 +163,47 @@ public class StateServiceImpl implements StateService {
                 .isLastPage(statePage.isLast())
                 .data(states)
                 .build();
+    }
+    @Override
+    public String uploadStateCSV(MultipartFile file) {
+
+        if(!Objects.equals(file.getContentType(), "text/csv")){
+            throw new IllegalArgumentException("Invalid file type. CSV file.");
+        }
+
+        try {
+            List<State> states = CSVParser.parse(file.getInputStream(), Charset.defaultCharset(), CSVFormat.DEFAULT)
+                    .stream().skip(1)
+                    .map(record -> {
+                        State state = new State();
+                        state.setStateName(record.get(1).trim());
+                        state.setStatus(Boolean.parseBoolean(record.get(2)));
+
+                        String countryName = record.get(0).trim();
+
+                        Country country = countryRepo.findByCountry(countryName);
+
+                        if (country == null) {
+                            country = new Country();
+                            country.setCountry(countryName.trim());
+                            country.setStatus(true);
+                            countryRepo.save(country);
+                        }
+
+                        state.setCountry(country);
+                        return state;
+                    })
+                    .toList();
+
+            stateRepo.saveAll(states);
+
+            return "CSV file uploaded successfully. records uploaded.";
+
+
+        }catch (Exception e){
+            return e.getMessage();
+        }
+
     }
 
 }
