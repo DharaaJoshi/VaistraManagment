@@ -58,19 +58,19 @@ public class BankBranchDto {
 
     @Min(value=0,message = "Bank Id should be positive digits only.")
     private Integer bankId;
-//   @Pattern(regexp = "^[a-zA-Z09\\s]+$", message = "Bank name should only contain alphabets,numeric ")
-//   private String bankName;
+   @Pattern(regexp = "^[a-zA-Z09\\s]+$", message = "Bank name should only contain alphabets,numeric ")
+  private String bankName;
 
     @Min(value=0,message = "State Id should be positive digits only.")
     private Integer stateId;
 
-//    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "State name should only contain alphabets .")
-//    private String stateName;
+  @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "State name should only contain alphabets .")
+    private String stateName;
 
     @Min(value=0,message = "District Id should be positive digits only.")
    private Integer districtId;
-//   @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "District name should only contain alphabets and spaces.")
-//    private String districtName;
+  @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "District name should only contain alphabets and spaces.")
+    private String districtName;
 
     private Boolean isActive;
 

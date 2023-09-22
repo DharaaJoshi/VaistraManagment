@@ -156,17 +156,49 @@ public class BankBranchServiceImpl implements BankBranchService {
                 .data(bankBranches)
                 .build();    }
 
-    @Override
-    public HttpResponse getBankBranchByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
-        return null;
-    }
+//    @Override
+//    public HttpResponse getBankBranchByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
+//        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+//                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+//
+//        Pageable pageable = PageRequest.of(pageNo, Integer.MAX_VALUE, sort);
+//
+//        Integer keyword9 = null;
+//        Boolean keyword10 = null;
+//
+//        try {
+//            keyword9 = Integer.parseInt(keyword);
+//        } catch (NumberFormatException e) {
+//            keyword9 = null;
+//        }
+//
+//        if(keyword.equalsIgnoreCase("true"))
+//            keyword10 = Boolean.TRUE;
+//        else if (keyword.equalsIgnoreCase("false")) {
+//            keyword10 = Boolean.FALSE;
+//        }
+//
+//     //   Page<BankBranch> bankBranchPage = bankBranchRepo.findByBank_BankNameor_StateNameOrDistrict_DistrictNameOrBranchNameOrBranchCodeOrBranchAddressOrBranchIfOrBranchPhoneNumberOrBranchIdOrIsActive(pageable,keyword,keyword,keyword,keyword,keyword,keyword,keyword,keyword,keyword9,keyword10);
+//
+//        List<BankBranchDto> bankBranches = appUtils.bankBranchesToDtos(bankBranchPage.getContent());
+//
+//        return HttpResponse.builder()
+//                .pageNumber(bankBranchPage.getNumber())
+//                .pageSize(bankBranchPage.getSize())
+//                .totalElements(bankBranchPage.getTotalElements())
+//                .totalPages(bankBranchPage.getTotalPages())
+//                .isLastPage(bankBranchPage.isLast())
+//                .data(bankBranches)
+//                .build();
+//
+//    }
 
     @Override
     public List<BankBranchDto> getAllActiveBankBranch() {
         List<BankBranch> bankBranches = bankBranchRepo.findAllByIsActive(true);
 
         if (bankBranches.isEmpty())
-            throw new ResourceNotFoundException("Bank Branch Data not available...!");
+            throw new ResourceNotFoundException("Branch Data not available.!");
 
         return appUtils.bankBranchesToDtos(bankBranches);
     }

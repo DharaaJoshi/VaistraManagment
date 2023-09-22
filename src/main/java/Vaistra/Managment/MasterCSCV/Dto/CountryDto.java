@@ -19,8 +19,8 @@ public class CountryDto {
     private int id;
     @NotEmpty(message = "Country Should not be Empty!")
     @NotBlank(message = "Country Should not be Blank!")
-    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Country name should only contain alphabets and spaces.")
-    @Size(min = 3, max = 250, message = "Country name should have a length between 3 and 250 characters.")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Country name should only contain alphabets.")
+    @Size(min = 3, max = 250, message = "Country name should have a length between 3 and 30 characters.")
     private String country;
     private boolean status=true;
 

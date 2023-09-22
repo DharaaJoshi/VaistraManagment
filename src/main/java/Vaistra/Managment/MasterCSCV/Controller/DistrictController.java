@@ -1,6 +1,7 @@
 package Vaistra.Managment.MasterCSCV.Controller;
 
 import Vaistra.Managment.MasterCSCV.Dto.DistrictDto;
+import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import Vaistra.Managment.MasterCSCV.Service.DistrictService;
 import io.jsonwebtoken.io.IOException;
 import jakarta.validation.Valid;
@@ -73,16 +74,15 @@ public class DistrictController {
     }
 
 
-//
-//    @GetMapping("search")
-//    public ResponseEntity<HttpResponse> searchByKeyword(@RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
-//                                                        @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-//                                                        @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
-//                                                        @RequestParam(value = "sortBy", defaultValue = "districtId", required = false) String sortBy,
-//                                                        @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection)
-//    {
-//        return new ResponseEntity<>(districtService.searchDistrict(keyword, pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
-//    }
+
+   @GetMapping("search")
+    public ResponseEntity<HttpResponse> searchByKeyword(@RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
+                                                        @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+                                                        @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
+                                                        @RequestParam(value = "sortBy", defaultValue = "districtId", required = false) String sortBy,
+                                                        @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection)
+   {      return new ResponseEntity<>(districtService.searchDistrict(keyword, pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
+   }
 
     @PostMapping("/csv")
     public ResponseEntity<String> uploadDistrictCSV(@RequestParam MultipartFile file) throws IOException, java.io.IOException {

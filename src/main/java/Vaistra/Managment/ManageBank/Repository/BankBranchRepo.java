@@ -1,6 +1,8 @@
 package Vaistra.Managment.ManageBank.Repository;
 
 import Vaistra.Managment.ManageBank.Dao.BankBranch;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +27,7 @@ public interface BankBranchRepo extends JpaRepository<BankBranch,Integer> {
     BankBranch findByBranchMicr(String trim);
 
     List<BankBranch> findAllByIsActive(boolean b);
+
+
+   // Page<BankBranch> findByBankName_StateNameOrDistrict_DistrictNameOrBranchNameOrBranchCodeOrBranchAddressOrBranchIfOrBranchPhoneNumberOrBranchIdOrIsActive(Pageable pageable, String keyword, String keyword1, String keyword2, String keyword3, String keyword4, String keyword5, String keyword6, String keyword7, Integer keyword9, Boolean keyword10);
 }

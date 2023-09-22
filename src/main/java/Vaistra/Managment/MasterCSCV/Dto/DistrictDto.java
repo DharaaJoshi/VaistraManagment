@@ -22,7 +22,6 @@ public class DistrictDto {
     private boolean status;
 
     @NotNull(message = "State Id shouldn't be null.")
-    @Min(value=0,message = "State Id should be positive digits only.")
     private Integer stateId;
 
     @Min(value=0,message = "Country Id should be positive digits only.")

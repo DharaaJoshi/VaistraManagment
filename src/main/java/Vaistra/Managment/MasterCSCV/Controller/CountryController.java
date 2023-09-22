@@ -1,6 +1,7 @@
 package Vaistra.Managment.MasterCSCV.Controller;
 
 import Vaistra.Managment.MasterCSCV.Dto.CountryDto;
+import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import Vaistra.Managment.MasterCSCV.Service.CountryService;
 import io.jsonwebtoken.io.IOException;
 import jakarta.validation.Valid;
@@ -30,17 +31,12 @@ public class CountryController {
         }
     @GetMapping("all")
     public ResponseEntity <List<CountryDto>>getAllCountries(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-                                                            @RequestParam(value = "pageSize", defaultValue = "5", required = false) Integer pageSize,
+                                                            @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
                                                             @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
                                                             @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection) {
 
         return new ResponseEntity<>(countryService.getAllCountries(pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
     }
-
-
-
-
-
 
     @PutMapping("{id}")
     public ResponseEntity<CountryDto> updateCountry(@RequestBody CountryDto country, @PathVariable int id) {
@@ -50,9 +46,18 @@ public class CountryController {
     public ResponseEntity<String> deleteCountryById(@PathVariable int id) {
         return new ResponseEntity<>(countryService.deleteCountryById(id), HttpStatus.OK);
     }
-    @PostMapping("/csv")
-    public ResponseEntity<String> uploadCountryCSV(@RequestParam MultipartFile file) throws IOException, java.io.IOException {
-        return new ResponseEntity<>(countryService.uploadCountryCSV(file),HttpStatus.OK);
+        @PostMapping("/csv")
+        public ResponseEntity<String> uploadCountryCSV(@RequestParam MultipartFile file) throws IOException, java.io.IOException {
+            return new ResponseEntity<>(countryService.uploadCountryCSV(file),HttpStatus.OK);
+        }
+    @GetMapping("search")
+    public ResponseEntity<HttpResponse> searchByKeyword(@RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
+                                                        @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+                                                        @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
+                                                        @RequestParam(value = "sortBy", defaultValue = "countryId", required = false) String sortBy,
+                                                        @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection)
+    {
+        return new ResponseEntity<>(countryService.searchCountry(keyword, pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
     }
 
 }

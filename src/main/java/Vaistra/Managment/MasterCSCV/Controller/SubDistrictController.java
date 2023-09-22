@@ -46,14 +46,7 @@ public class SubDistrictController {
     }
 
 
-    @GetMapping
-    public ResponseEntity<List<SubDistrictDto>> getAllDistrictsByActive(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-                                                                     @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
-                                                                     @RequestParam(value = "sortBy", defaultValue = "districtId", required = false) String sortBy,
-                                                                     @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection)
-    {
-        return new ResponseEntity<>(subDistrictService.getAllSubDistrictsByActiveState(pageNumber, pageSize, sortBy, sortDirection), HttpStatus.FOUND);
-    }
+
 
 
 
@@ -63,8 +56,6 @@ public class SubDistrictController {
     {
         return new ResponseEntity<>(subDistrictService.updateSubDistrict(subdistrictDto, subDistrictId), HttpStatus.OK);
     }
-
-
 
     @DeleteMapping("{subDistrictId}")
     public ResponseEntity<String> hardDeleteDistrictById(@PathVariable int subDistrictId)

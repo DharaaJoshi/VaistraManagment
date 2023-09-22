@@ -1,5 +1,6 @@
 package Vaistra.Managment.MasterCSCV.repo;
 
+import Vaistra.Managment.MasterCSCV.Dao.District;
 import Vaistra.Managment.MasterCSCV.Dao.SubDistrict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,6 @@ public interface SubDistrictRepo extends JpaRepository<SubDistrict,Integer> {
 
 
     Page<SubDistrict> findBySubDistrictNameOrDistrict_DistrictNameOrState_StateNameOrCountry_CountryOrSubDistrictId(Pageable pageable, String keyword, String keyword1, String keyword2, String keyword3, Integer keyword5, Boolean keyword6);
+
+    Page<SubDistrict> findBySubDistrictNameContainingIgnoreCase(String keyword, Pageable pageable);
 }

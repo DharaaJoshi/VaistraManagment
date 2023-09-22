@@ -10,12 +10,7 @@ public interface StateService {
     StateDto getStateById(int id);
     HttpResponse getAllState(int pageNumber, int pageSize, String sortBy, String sortDirection);
     StateDto updateState(StateDto stateDto, int id);
-
     String deleteState(Integer stateId);
-
-    HttpResponse getState(int pageNo, int pageSize, String sortBy, String sortDirection);
-
-    HttpResponse getStateByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword);
-
     String uploadStateCSV(MultipartFile file);
+    HttpResponse searchStateByKeyword(String keyword, int pageNumber, int pageSize, String sortBy, String sortDirection);
 }

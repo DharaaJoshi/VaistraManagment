@@ -77,15 +77,7 @@ public class DistrictServiceImpl implements DistrictService {
         Page<District> pageDistrict = districtRepo.findAll(pageable);
         return appUtils.districtsToDtos(pageDistrict.getContent());
     }
-    @Override
-    public List<DistrictDto> getAllDistrictsByActiveState(int pageNumber, int pageSize, String sortBy, String sortDirection) {
-        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
-                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-        Page<District> pageDistrict = districtRepo.findAllByState_Status(true, pageable);
-        return appUtils.districtsToDtos(pageDistrict.getContent());
-    }
 
     @Override
     public DistrictDto updateDistrict(DistrictDto districtDto, int id) {
@@ -113,74 +105,6 @@ public class DistrictServiceImpl implements DistrictService {
         return "District with id '"+id+"' deleted!";
     }
 
-
-    @Override
-    public List<DistrictDto> getDistrictsByStateId(int stateId) {
-
-        stateRepo.findById(stateId).
-                orElseThrow(()->new ResourceNotFoundException("State with id '"+stateId+"' not found!"));
-        return appUtils.districtsToDtos(districtRepo.findByState_StateId(stateId));
-    }
-
-@Override
-public HttpResponse getDistrict(int pageNo, int pageSize, String sortBy, String sortDirection) {
-    Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
-            Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-
-    Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-
-    Page<District> districtPage = districtRepo.findAllByState_Status(true,pageable);
-
-    List<DistrictDto> districts = appUtils.districtsToDtos(districtPage.getContent());
-
-    return HttpResponse.builder()
-            .pageNumber(districtPage.getNumber())
-            .pageSize(districtPage.getSize())
-            .totalElements(districtPage.getTotalElements())
-            .totalPages(districtPage.getTotalPages())
-            .isLastPage(districtPage.isLast())
-            .data(districts)
-            .build();
-}
-
-
-    @Override
-    public HttpResponse getDistrictByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
-        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
-                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-
-        Pageable pageable = PageRequest.of(pageNo, Integer.MAX_VALUE, sort);
-
-        Integer keyword4 = null;
-        Boolean keyword5 = null;
-
-
-        if(keyword.equalsIgnoreCase("true"))
-            keyword5 = Boolean.TRUE;
-        else if (keyword.equalsIgnoreCase("false")) {
-            keyword5 = Boolean.FALSE;
-        }
-
-        try {
-            keyword4 = Integer.parseInt(keyword);
-        } catch (NumberFormatException e) {
-            keyword4 = null;
-        }
-
-
-        Page<District> districtPage = districtRepo.findByDistrictNameOrState_StateNameOrCountry_CountryOrDistrictId(pageable,keyword,keyword,keyword,keyword4,keyword5);
-
-        List<DistrictDto> districts = appUtils.districtsToDtos(districtPage.getContent());
-
-        return HttpResponse.builder()
-                .pageNumber(districtPage.getNumber())
-                .pageSize(districtPage.getSize())
-                .totalElements(districtPage.getTotalElements())
-                .totalPages(districtPage.getTotalPages())
-                .isLastPage(districtPage.isLast())
-                .data(districts)
-                .build();
-    }
     @Override
     public String uploadDistrictCSV(MultipartFile file) {
 
@@ -237,6 +161,24 @@ public HttpResponse getDistrict(int pageNo, int pageSize, String sortBy, String 
             return e.getMessage();
         }
 
+    }
+    @Override
+    public HttpResponse searchDistrict(String keyword, int pageNumber, int pageSize, String sortBy, String sortDirection) {
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<District> pageDistrict = districtRepo.findByDistrictNameContainingIgnoreCase(keyword, pageable);
+        List<DistrictDto> dtos = appUtils.districtsToDtos(pageDistrict.getContent());
+        return HttpResponse.builder()
+                .pageNumber(pageDistrict.getNumber())
+                .pageSize(pageDistrict.getSize())
+                .totalElements(pageDistrict.getTotalElements())
+                .totalPages(pageDistrict.getTotalPages())
+                .isLastPage(pageDistrict.isLast())
+                .data(dtos)
+                .build();
     }
 
 }

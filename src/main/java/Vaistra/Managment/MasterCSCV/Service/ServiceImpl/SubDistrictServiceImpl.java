@@ -85,10 +85,7 @@ public class SubDistrictServiceImpl implements SubDistrictService {
         return appUtils.subdistrictsToDtos(pageDistrict.getContent());
     }
 
-    @Override
-    public List<SubDistrictDto> getAllSubDistrictsByActiveState(int pageNumber, int pageSize, String sortBy, String sortDirection) {
-        return null;
-    }
+
 
     @Override
     public SubDistrictDto updateSubDistrict(SubDistrictDto subDistrictDto, int id) {
@@ -125,64 +122,23 @@ public class SubDistrictServiceImpl implements SubDistrictService {
     }
 
     @Override
-    public List<DistrictDto> getDistrictsByStateId(int stateId) {
-        return null;
-    }
-    @Override
-    public HttpResponse getSubDistrict(int pageNo, int pageSize, String sortBy, String sortDirection) {
+    public HttpResponse searchSubDistrict(String keyword, int pageNumber, int pageSize, String sortBy, String sortDirection) {
         Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
-        Page<SubDistrict> subDistrictPage = subDistrictRepo.findAllByDistrict_Status(true,pageable);
-
-        List<SubDistrictDto> SubDistricts = appUtils.subdistrictsToDtos(subDistrictPage.getContent());
-
+        Page<SubDistrict> pageDistrict = subDistrictRepo.findBySubDistrictNameContainingIgnoreCase(keyword, pageable);
+        List<SubDistrictDto> dtos = appUtils.subdistrictsToDtos(pageDistrict.getContent());
         return HttpResponse.builder()
-                .pageNumber(subDistrictPage.getNumber())
-                .pageSize(subDistrictPage.getSize())
-                .totalElements(subDistrictPage.getTotalElements())
-                .totalPages(subDistrictPage.getTotalPages())
-                .isLastPage(subDistrictPage.isLast())
-                .data(SubDistricts)
-                .build();    }
-    @Override
-    public HttpResponse getSubDistrictByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
-        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
-                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-
-        Pageable pageable = PageRequest.of(pageNo, Integer.MAX_VALUE, sort);
-
-        Integer keyword5 = null;
-        Boolean keyword6 = null;
-
-
-        if(keyword.equalsIgnoreCase("true"))
-            keyword6 = Boolean.TRUE;
-        else if (keyword.equalsIgnoreCase("false")) {
-            keyword6 = Boolean.FALSE;
-        }
-
-        try {
-            keyword5 = Integer.parseInt(keyword);
-        } catch (NumberFormatException e) {
-            keyword5 = null;
-        }
-
-
-        Page<SubDistrict> subDistrictPage = subDistrictRepo.findBySubDistrictNameOrDistrict_DistrictNameOrState_StateNameOrCountry_CountryOrSubDistrictId(pageable,keyword,keyword,keyword,keyword,keyword5,keyword6);
-
-        List<SubDistrictDto> subDistricts = appUtils.subdistrictsToDtos(subDistrictPage.getContent());
-
-        return HttpResponse.builder()
-                .pageNumber(subDistrictPage.getNumber())
-                .pageSize(subDistrictPage.getSize())
-                .totalElements(subDistrictPage.getTotalElements())
-                .totalPages(subDistrictPage.getTotalPages())
-                .isLastPage(subDistrictPage.isLast())
-                .data(subDistricts)
+                .pageNumber(pageDistrict.getNumber())
+                .pageSize(pageDistrict.getSize())
+                .totalElements(pageDistrict.getTotalElements())
+                .totalPages(pageDistrict.getTotalPages())
+                .isLastPage(pageDistrict.isLast())
+                .data(dtos)
                 .build();
     }
+
 
 }

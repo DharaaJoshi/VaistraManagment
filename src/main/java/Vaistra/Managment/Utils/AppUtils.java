@@ -166,7 +166,7 @@ public class AppUtils {
     }
 
     public List<BankDto> banksToDtos(List<Bank> bank) {
-        java.lang.reflect.Type targetListTYpe=new TypeToken<List<Equipment>>(){}.getType();
+        java.lang.reflect.Type targetListTYpe=new TypeToken<List<Bank>>(){}.getType();
         return modelMapper.map(bank,targetListTYpe);
     }
 
@@ -175,7 +175,7 @@ public class AppUtils {
     }
 
     public List<BankBranchDto> bankBranchesToDtos(List<BankBranch> content) {
-        java.lang.reflect.Type targetListTYpe=new TypeToken<List<Equipment>>(){}.getType();
+        java.lang.reflect.Type targetListTYpe=new TypeToken<List<BankBranch>>(){}.getType();
         return modelMapper.map(content,targetListTYpe);
     }
 }

@@ -14,7 +14,7 @@ public interface BankBranchService {
 
     public HttpResponse getBankBranch(int pageNo, int pageSize, String sortBy, String sortDirection);
 
-    public HttpResponse getBankBranchByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword);
+   // public HttpResponse getBankBranchByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword);
 
     public List<BankBranchDto> getAllActiveBankBranch();
 }

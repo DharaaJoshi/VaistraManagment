@@ -18,24 +18,18 @@ public interface SubDistrictService {
 
         List<SubDistrictDto> getAllSubDistricts(int pageNumber, int pageSize, String sortBy, String sortDirection);
 
-        List<SubDistrictDto> getAllSubDistrictsByActiveState(int pageNumber, int pageSize, String sortBy, String sortDirection);
+    HttpResponse searchSubDistrict(String keyword, int pageNumber, int pageSize, String sortBy, String sortDirection);
+
 
         public SubDistrictDto updateSubDistrict(SubDistrictDto subDistrict, int id);
         public String deleteSubDistrictById(int id);
-//    public String softDeleteCountryById(int id);
-//    public String restoreCountryById(int id);
 
 
 
-        List<DistrictDto> getDistrictsByStateId(int stateId);
-
-    HttpResponse getSubDistrict(int pageNo, int pageSize, String sortBy, String sortDirection);
-
-    HttpResponse getSubDistrictByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword);
 
 
 
-    //List<DistrictDto> getDistrictsByCountryId(int countryId);
+
     }
 
 

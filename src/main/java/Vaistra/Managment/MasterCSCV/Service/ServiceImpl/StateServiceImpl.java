@@ -107,63 +107,8 @@ public class StateServiceImpl implements StateService {
         State state = stateRepo.findById(stateId).orElseThrow(()-> new ResourceNotFoundException("State not found with given id: " + stateId));
         stateRepo.deleteById(stateId);
         return "Record deleted successfully.";    }
-    @Override
-    public HttpResponse getState(int pageNo, int pageSize, String sortBy, String sortDirection) {
-        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
-                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-
-        Page<State> statePage = stateRepo.findAllByCountry_Status(true,pageable);
-
-        List<StateDto> states = appUtils.StatesToDtos(statePage.getContent());
-
-        return HttpResponse.builder()
-                .pageNumber(statePage.getNumber())
-                .pageSize(statePage.getSize())
-                .totalElements(statePage.getTotalElements())
-                .totalPages(statePage.getTotalPages())
-                .isLastPage(statePage.isLast())
-                .data(states)
-                .build();
-    }
-    @Override
-    public HttpResponse getStateByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
-        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
-                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-
-        Pageable pageable = PageRequest.of(pageNo, Integer.MAX_VALUE, sort);
-
-        Integer keyword3 = null;
-        Boolean keyword4 = null;
 
 
-        if(keyword.equalsIgnoreCase("true"))
-            keyword4 = Boolean.TRUE;
-        else if (keyword.equalsIgnoreCase("false")) {
-            keyword4 = Boolean.FALSE;
-        }
-
-        try {
-            keyword3 = Integer.parseInt(keyword);
-        } catch (NumberFormatException e) {
-            keyword3 = null;
-        }
-
-
-        Page<State> statePage = stateRepo.findByStateNameOrCountry_CountryOrStateId(pageable, keyword, keyword, keyword3, keyword4);
-
-        List<StateDto> states = appUtils.StatesToDtos(statePage.getContent());
-
-        return HttpResponse.builder()
-                .pageNumber(statePage.getNumber())
-                .pageSize(statePage.getSize())
-                .totalElements(statePage.getTotalElements())
-                .totalPages(statePage.getTotalPages())
-                .isLastPage(statePage.isLast())
-                .data(states)
-                .build();
-    }
     @Override
     public String uploadStateCSV(MultipartFile file) {
 
@@ -204,6 +149,25 @@ public class StateServiceImpl implements StateService {
             return e.getMessage();
         }
 
+    }
+    @Override
+    public HttpResponse searchStateByKeyword(String keyword, int pageNumber, int pageSize, String sortBy, String sortDirection) {
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<State> pageState = stateRepo.findByStateNameContainingIgnoreCase(keyword,  pageable);
+
+        List<StateDto> states = appUtils.StatesToDtos(pageState.getContent());
+
+        return HttpResponse.builder()
+                .pageNumber(pageState.getNumber())
+                .pageSize(pageState.getSize())
+                .totalElements(pageState.getTotalElements())
+                .totalPages(pageState.getTotalPages())
+                .isLastPage(pageState.isLast())
+                .data(states)
+                .build();
     }
 
 }

@@ -32,12 +32,11 @@ public class StateController {
 
         return new ResponseEntity<>(stateService.getAllState(pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
     }
-//    @GetMapping("{state_id}")
-//    public ResponseEntity <List<StateDto>>getStateById(@PathVariable int id){
-//
-//        return new ResponseEntity<>(stateService.getStateById(id), HttpStatus.OK);
-//    }
-    @PutMapping("{state_id}")
+    @DeleteMapping("{stateId}")
+    public ResponseEntity<String> deleteStateById(@PathVariable int stateId) {
+        return new ResponseEntity<>(stateService.deleteState(stateId), HttpStatus.OK);
+    }
+    @PutMapping("{stateId}")
     public ResponseEntity<StateDto> updateState(@RequestBody StateDto state, @PathVariable int state_id) {
         return new ResponseEntity<>(stateService.updateState(state, state_id), HttpStatus.ACCEPTED);
     }

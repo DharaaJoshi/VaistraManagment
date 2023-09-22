@@ -96,13 +96,16 @@ public class CountryServiceImpl implements CountryService {
     public String uploadCountryCSV(MultipartFile file) throws IOException {
 
 
-        if(!Objects.equals(file.getContentType(), "csv")){
-            throw new IllegalArgumentException("Invalid file type.upload a CSV file only.");
+        if(file.isEmpty()){
+            throw new ResourceNotFoundException("Country CSV File not found.");
+        }
+        if(!Objects.equals(file.getContentType(), "text/csv")){
+            throw new IllegalArgumentException("Invalid file type. Please upload a CSV file.");
         }
 
         try {
             List<Country> countries = CSVParser.parse(file.getInputStream(), Charset.defaultCharset(), CSVFormat.DEFAULT)
-                    .stream().skip(1)
+                    .stream().skip(1) // Skip the first row
                     .map(record -> {
                         Country country = new Country();
                         country.setCountry(record.get(0).trim());
@@ -113,65 +116,33 @@ public class CountryServiceImpl implements CountryService {
 
 
 
+            long uploadedRecordCount = countries.size();
             countryRepo.saveAll(countries);
 
-            return "CSV file uploaded successfully. " ;
+            return "CSV file uploaded successfully. " + uploadedRecordCount + " records uploaded.";
 
         }catch (Exception e){
             return e.getMessage();
         }
     }
 
-    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-        Set<Object> seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
-    }
-
-
-    @Override
-    public HttpResponse getCountryByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
+   public HttpResponse searchCountry(String keyword, int pageNumber, int pageSize, String sortBy, String sortDirection) {
         Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
-        Pageable pageable = PageRequest.of(pageNo, Integer.MAX_VALUE, sort);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
-        Integer keyword2 = null;
-        Boolean keyword3 = null;
-
-
-        if (keyword.equalsIgnoreCase("true"))
-            keyword3 = Boolean.TRUE;
-        else if (keyword.equalsIgnoreCase("false")) {
-            keyword3 = Boolean.FALSE;
-        }
-
-        try {
-            keyword2 = Integer.parseInt(keyword);
-        } catch (NumberFormatException e) {
-            keyword2 = null;
-        }
-return null;
-
-    }
-    @Override
-    public HttpResponse getCountry(int pageNo, int pageSize, String sortBy, String sortDirection) {
-        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
-                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-
-        Page<Country> countryPage = countryRepo.findAll(pageable);
-
-        List<CountryDto> countries = appUtils.countriesToDtos(countryPage.getContent());
-
+        Page<Country> pageCountry = countryRepo.findByCountryContainingIgnoreCase(keyword, pageable);
+        List<CountryDto> countries = appUtils.countriesToDtos(pageCountry.getContent());
         return HttpResponse.builder()
-                .pageNumber(countryPage.getNumber())
-                .pageSize(countryPage.getSize())
-                .totalElements(countryPage.getTotalElements())
-                .totalPages(countryPage.getTotalPages())
-                .isLastPage(countryPage.isLast())
+                .pageNumber(pageCountry.getNumber())
+                .pageSize(pageCountry.getSize())
+                .totalElements(pageCountry.getTotalElements())
+                .totalPages(pageCountry.getTotalPages())
+                .isLastPage(pageCountry.isLast())
                 .data(countries)
                 .build();
     }
+
 
 }
