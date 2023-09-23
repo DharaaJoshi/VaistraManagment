@@ -1,6 +1,8 @@
 package Vaistra.Managment.MasterCSCV.Controller;
 
 
+import Vaistra.Managment.MasterCSCV.Dto.DistrictDto;
+import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import Vaistra.Managment.MasterCSCV.Dto.VillageDto;
 import Vaistra.Managment.MasterCSCV.Service.VillageService;
 import jakarta.validation.Valid;
@@ -37,6 +39,23 @@ public class VillageController {
                                                             @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection) {
 
         return new ResponseEntity<>(villageService.getAllVillage(pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
+    }
+    @GetMapping("search")
+    public ResponseEntity<HttpResponse> searchByKeyword(@RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
+                                                        @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+                                                        @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
+                                                        @RequestParam(value = "sortBy", defaultValue = "countryId", required = false) String sortBy,
+                                                        @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection)
+    {
+        return new ResponseEntity<>(villageService.searchVillage(keyword, pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
+    }
+    @PutMapping("{villageId}")
+    public ResponseEntity<VillageDto> updateDistrict(@Valid @RequestBody VillageDto villageDto, @PathVariable int villageId) {
+        return new ResponseEntity<>(villageService.updateVillage(villageDto, villageId), HttpStatus.OK);
+    }
+    @DeleteMapping("{villageId}")
+    public ResponseEntity<String> DeleteDistrictById(@PathVariable int villageId) {
+        return new ResponseEntity<>(villageService.deleteVillageById(villageId), HttpStatus.OK);
     }
 
 }

@@ -18,7 +18,6 @@ public interface BankService {
 
     public String deleteBank(Integer bankId);
 
-    public HttpResponse getBank(int pageNo, int pageSize, String sortBy, String sortDirection);
 
     public HttpResponse getBankByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword);
 
@@ -26,5 +25,9 @@ public interface BankService {
 
     byte[] getBankLogo(Integer bankId);
 
-    public List<BankDto> getAllActiveBank();
+
+
+    List<BankDto> getAllBank(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
+
+    String uploadBankCSV(MultipartFile file);
 }

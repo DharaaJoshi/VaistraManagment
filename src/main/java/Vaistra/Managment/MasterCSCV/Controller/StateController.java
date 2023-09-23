@@ -44,4 +44,13 @@ public class StateController {
     public ResponseEntity<String> uploadStateCSV(@RequestParam MultipartFile file) throws IOException, java.io.IOException {
         return new ResponseEntity<>(stateService.uploadStateCSV(file),HttpStatus.OK);
     }
+    @GetMapping("search")
+    public ResponseEntity<HttpResponse> searchByKeyword(@RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
+                                                        @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+                                                        @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
+                                                        @RequestParam(value = "sortBy", defaultValue = "stateId", required = false) String sortBy,
+                                                        @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection)
+    {
+        return new ResponseEntity<>(stateService.searchStateByKeyword(keyword, pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
+    }
 }

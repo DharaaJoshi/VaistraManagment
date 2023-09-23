@@ -1,6 +1,7 @@
 package Vaistra.Managment.MasterCSCV.Service.ServiceImpl;
 
 import Vaistra.Managment.MasterCSCV.Dao.*;
+import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import Vaistra.Managment.MasterCSCV.Dto.SubDistrictDto;
 import Vaistra.Managment.MasterCSCV.Dto.VillageDto;
 import Vaistra.Managment.MasterCSCV.Exception.DuplicateEntryException;
@@ -98,4 +99,29 @@ private  final DistrictRepo districtRepo;
         return appUtils.villageToDtos(pageDistrict.getContent());
     }
 
+    @Override
+    public HttpResponse searchVillage(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<SubDistrict> pageDistrict = subDistrictRepo.findBySubDistrictNameContainingIgnoreCase(keyword, pageable);
+        List<SubDistrictDto> dtos = appUtils.subdistrictsToDtos(pageDistrict.getContent());
+        return HttpResponse.builder()
+                .pageNumber(pageDistrict.getNumber())
+                .pageSize(pageDistrict.getSize())
+                .totalElements(pageDistrict.getTotalElements())
+                .totalPages(pageDistrict.getTotalPages())
+                .isLastPage(pageDistrict.isLast())
+                .data(dtos)
+                .build();
+    }
+    @Override
+    public String deleteVillageById(int id) {
+        villageRepo.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Village with id '"+id+"' not found!"));
+        villageRepo.deleteById(id);
+        return "Village with id '"+id+"' deleted!";
+    }
 }

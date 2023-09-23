@@ -1,5 +1,6 @@
 package Vaistra.Managment.MasterCSCV.Controller;
 
+import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import Vaistra.Managment.MasterCSCV.Dto.SubDistrictDto;
 import Vaistra.Managment.MasterCSCV.Service.SubDistrictService;
 import jakarta.validation.Valid;
@@ -29,11 +30,6 @@ public class SubDistrictController {
     }
 
 
-    @GetMapping("{subDistrictId}")
-    public ResponseEntity<SubDistrictDto> getSubDistrictById(@PathVariable int subDistrictId)
-    {
-        return new ResponseEntity<>(subDistrictService.getSubDistrictById(subDistrictId), HttpStatus.FOUND);
-    }
 
 
     @GetMapping("all")
@@ -46,11 +42,6 @@ public class SubDistrictController {
     }
 
 
-
-
-
-
-
     @PutMapping("{subDistrictId}")
     public ResponseEntity<SubDistrictDto> updateSubDistrict(@Valid @RequestBody SubDistrictDto subdistrictDto, @PathVariable int subDistrictId)
     {
@@ -58,8 +49,17 @@ public class SubDistrictController {
     }
 
     @DeleteMapping("{subDistrictId}")
-    public ResponseEntity<String> hardDeleteDistrictById(@PathVariable int subDistrictId)
+    public ResponseEntity<String> DeleteDistrictById(@PathVariable int subDistrictId)
     {
         return new ResponseEntity<>(subDistrictService.deleteSubDistrictById(subDistrictId), HttpStatus.OK);
+    }
+    @GetMapping("search")
+    public ResponseEntity<HttpResponse> searchByKeyword(@RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
+                                                        @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+                                                        @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
+                                                        @RequestParam(value = "sortBy", defaultValue = "subDistrictId", required = false) String sortBy,
+                                                        @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection)
+    {
+        return new ResponseEntity<>(subDistrictService.searchSubDistrict(keyword, pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
     }
 }

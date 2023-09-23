@@ -4,10 +4,13 @@ import Vaistra.Managment.ManageBank.Dao.Bank;
 import Vaistra.Managment.ManageBank.Dto.BankDto;
 import Vaistra.Managment.ManageBank.Repository.BankRepo;
 import Vaistra.Managment.ManageBank.Service.BankService;
+import Vaistra.Managment.MasterCSCV.Dao.Country;
 import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import Vaistra.Managment.MasterCSCV.Exception.DuplicateEntryException;
 import Vaistra.Managment.MasterCSCV.Exception.ResourceNotFoundException;
 import Vaistra.Managment.Utils.AppUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BankServiceImpl implements BankService {
@@ -107,30 +112,25 @@ public class BankServiceImpl implements BankService {
         }
 
 
-    @Override
-    public HttpResponse getBank(int pageNo, int pageSize, String sortBy, String sortDirection) {
-          Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
-                org.springframework.data.domain.Sort.by(sortBy).ascending() : org.springframework.data.domain.Sort.by(sortBy).descending();
 
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-
-        Page<Bank> bankPage = bankRepo.findAll(pageable);
-
-        List<BankDto> banks = appUtils.banksToDtos(bankPage.getContent());
-
-        return HttpResponse.builder()
-                .pageNumber(bankPage.getNumber())
-                .pageSize(bankPage.getSize())
-                .totalElements(bankPage.getTotalElements())
-                .totalPages(bankPage.getTotalPages())
-                .isLastPage(bankPage.isLast())
-                .data(banks)
-                .build();
-    }
 
     @Override
     public HttpResponse getBankByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
-        return null;
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Page<Bank> pageBank= bankRepo.findByBankNameContainingIgnoreCase(keyword, pageable);
+        List<BankDto> Bank = appUtils.banksToDtos(pageBank.getContent());
+        return HttpResponse.builder()
+                .pageNumber(pageBank.getNumber())
+                .pageSize(pageBank.getSize())
+                .totalElements(pageBank.getTotalElements())
+                .totalPages(pageBank.getTotalPages())
+                .isLastPage(pageBank.isLast())
+                .data(Bank)
+                .build();
     }
 
     @Override
@@ -140,12 +140,45 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    public List<BankDto> getAllActiveBank() {
-        List<Bank> bank = bankRepo.findAllByIsActive(true);
+    public List<BankDto> getAllBank(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
-        if (bank.isEmpty())
-            throw new ResourceNotFoundException("Bank Branch Data not available...!");
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Bank> pageBank = bankRepo.findAll(pageable);
+        return appUtils.banksToDtos(pageBank.getContent());
+    }
+    public String uploadBankCSV(MultipartFile file)  {
 
-        return appUtils.banksToDtos(bank);
+
+        if(file.isEmpty()){
+            throw new ResourceNotFoundException(" CSV File not found.");
+        }
+        if(!Objects.equals(file.getContentType(), "text/csv")){
+            throw new IllegalArgumentException("Invalid file type. Please upload a CSV file.");
+        }
+
+        try {
+            List<Bank> banks= CSVParser.parse(file.getInputStream(), Charset.defaultCharset(), CSVFormat.DEFAULT)
+                    .stream().skip(1) // Skip the first row
+                    .map(record -> {
+                        Bank bank = new Bank();
+                        bank.setBankName(record.get(0).trim());
+                        bank.setBankShortName(record.get(1).trim());
+                        bank.setIsActive(Boolean.parseBoolean(record.get(2)));
+                        return bank;
+                    })
+                    .toList();
+
+
+
+            long uploadedRecordCount = banks.size();
+            bankRepo.saveAll(banks);
+
+            return "CSV file uploaded successfully. " + uploadedRecordCount + " records uploaded.";
+
+        }catch (Exception e){
+            return e.getMessage();
+        }
     }
 }

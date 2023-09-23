@@ -6,6 +6,7 @@ import Vaistra.Managment.ManageBank.Dto.BankBranchDto;
 import Vaistra.Managment.ManageBank.Repository.BankBranchRepo;
 import Vaistra.Managment.ManageBank.Repository.BankRepo;
 import Vaistra.Managment.ManageBank.Service.BankBranchService;
+import Vaistra.Managment.MasterCSCV.Dao.Country;
 import Vaistra.Managment.MasterCSCV.Dao.District;
 import Vaistra.Managment.MasterCSCV.Dao.State;
 import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
@@ -14,13 +15,19 @@ import Vaistra.Managment.MasterCSCV.Exception.ResourceNotFoundException;
 import Vaistra.Managment.MasterCSCV.repo.DistrictRepo;
 import Vaistra.Managment.MasterCSCV.repo.StateRepo;
 import Vaistra.Managment.Utils.AppUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.Charset;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BankBranchServiceImpl implements BankBranchService {
@@ -136,8 +143,10 @@ public class BankBranchServiceImpl implements BankBranchService {
         return "Record deleted successfully.";
     }
 
+
+
     @Override
-    public HttpResponse getBankBranch(int pageNo, int pageSize, String sortBy, String sortDirection) {
+    public HttpResponse getBankBranchByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
         Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
@@ -154,52 +163,94 @@ public class BankBranchServiceImpl implements BankBranchService {
                 .totalPages(bankBranchPage.getTotalPages())
                 .isLastPage(bankBranchPage.isLast())
                 .data(bankBranches)
-                .build();    }
+                .build();
 
-//    @Override
-//    public HttpResponse getBankBranchByKeyword(int pageNo, int pageSize, String sortBy, String sortDirection, String keyword) {
-//        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
-//                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-//
-//        Pageable pageable = PageRequest.of(pageNo, Integer.MAX_VALUE, sort);
-//
-//        Integer keyword9 = null;
-//        Boolean keyword10 = null;
-//
-//        try {
-//            keyword9 = Integer.parseInt(keyword);
-//        } catch (NumberFormatException e) {
-//            keyword9 = null;
-//        }
-//
-//        if(keyword.equalsIgnoreCase("true"))
-//            keyword10 = Boolean.TRUE;
-//        else if (keyword.equalsIgnoreCase("false")) {
-//            keyword10 = Boolean.FALSE;
-//        }
-//
-//     //   Page<BankBranch> bankBranchPage = bankBranchRepo.findByBank_BankNameor_StateNameOrDistrict_DistrictNameOrBranchNameOrBranchCodeOrBranchAddressOrBranchIfOrBranchPhoneNumberOrBranchIdOrIsActive(pageable,keyword,keyword,keyword,keyword,keyword,keyword,keyword,keyword,keyword9,keyword10);
-//
-//        List<BankBranchDto> bankBranches = appUtils.bankBranchesToDtos(bankBranchPage.getContent());
-//
-//        return HttpResponse.builder()
-//                .pageNumber(bankBranchPage.getNumber())
-//                .pageSize(bankBranchPage.getSize())
-//                .totalElements(bankBranchPage.getTotalElements())
-//                .totalPages(bankBranchPage.getTotalPages())
-//                .isLastPage(bankBranchPage.isLast())
-//                .data(bankBranches)
-//                .build();
-//
-//    }
+    }
 
     @Override
-    public List<BankBranchDto> getAllActiveBankBranch() {
-        List<BankBranch> bankBranches = bankBranchRepo.findAllByIsActive(true);
+    public List<BankBranchDto> getAllBankBranch(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
+        Sort sort = (sortDirection.equalsIgnoreCase("asc")) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
-        if (bankBranches.isEmpty())
-            throw new ResourceNotFoundException("Branch Data not available.!");
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<BankBranch> pageBankBranch = bankBranchRepo.findAll(pageable);
+        return appUtils.bankBranchesToDtos(pageBankBranch.getContent());
+    }
+    public String uploadBankBranchCSV(MultipartFile file)  {
 
-        return appUtils.bankBranchesToDtos(bankBranches);
+
+        if(file.isEmpty()){
+            throw new ResourceNotFoundException(" CSV File not found.");
+        }
+        if(!Objects.equals(file.getContentType(), "text/csv")){
+            throw new IllegalArgumentException("Invalid file type. Please upload a CSV file.");
+        }
+
+        try {
+            List<BankBranch> banksBranch= CSVParser.parse(file.getInputStream(), Charset.defaultCharset(), CSVFormat.DEFAULT)
+                    .stream().skip(1) // Skip the first row
+                    .map(record -> {
+                        BankBranch bankBranch = new BankBranch();
+                        bankBranch.setBranchName(record.get(4).trim());
+                        bankBranch.setBranchAddress(record.get(0).trim());
+                        bankBranch.setBranchIfsc(record.get(2).trim());
+                        bankBranch.setBranchCode(record.get(1).trim());
+                        bankBranch.setBranchMicr(record.get(2).trim());
+                        bankBranch.setBranchPhoneNumber(record.get(5).trim());
+                        bankBranch.setFromTiming(LocalTime.parse(record.get(6).trim()));
+                        bankBranch.setIsActive(Boolean.parseBoolean(record.get(7)));
+                        bankBranch.setToTiming(LocalTime.parse(record.get(8)));
+
+                        String stateName = record.get(11).trim();
+
+                        State state = stateRepo.findByStateName(stateName);
+                        if(state == null){
+                            state = new State();
+                            state.setStateName(stateName.trim());
+                            state.setStatus(true);
+
+                            String disName= record.get(10).trim();
+
+                            District dis = districtRepo.findByDistrictName(disName);
+
+                            if (dis == null) {
+                                dis = new District();
+                                dis.setDistrictName(disName.trim());
+                                dis.setStatus(true);
+                                districtRepo.save(dis);
+                            }
+
+                            dis.setDistrictName(disName);
+                            districtRepo.save(dis);
+
+                        }
+                        String BankName = record.get(9).trim();
+
+                        Bank bank = bankRepo.findByBankName(BankName);
+
+                        if (bank == null) {
+                            bank = new Bank();
+                            bank.setBankName(BankName.trim());
+
+                            bankRepo.save(bank);
+                        }
+
+                        bankBranch.setDistrict();
+                        bankBranch.setBank(state);
+
+                            return bankBranch;
+                    })
+                    .toList();
+
+
+
+            long uploadedRecordCount = banksBranch.size();
+            bankBranchRepo.saveAll(banksBranch);
+
+            return "CSV file uploaded successfully. " + uploadedRecordCount + " records uploaded.";
+
+        }catch (Exception e){
+            return e.getMessage();
+        }
     }
 }
