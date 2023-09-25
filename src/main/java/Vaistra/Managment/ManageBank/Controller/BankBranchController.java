@@ -3,6 +3,7 @@ package Vaistra.Managment.ManageBank.Controller;
 import Vaistra.Managment.ManageBank.Dto.BankBranchDto;
 import Vaistra.Managment.ManageBank.Dto.BankDto;
 import Vaistra.Managment.ManageBank.Service.BankBranchService;
+import Vaistra.Managment.MasterCSCV.Dto.DistrictDto;
 import Vaistra.Managment.MasterCSCV.Dto.HttpResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -29,13 +30,13 @@ public class BankBranchController {
     }
 
     @PutMapping("{branchId}")
-    public ResponseEntity<BankBranchDto> updateBank(@PathVariable Integer id, @RequestPart @Valid BankBranchDto bankBranchDto) {
-        return new ResponseEntity<>(bankBranchService.updateBankBranch(id, bankBranchDto), HttpStatus.OK);
+    public ResponseEntity<BankBranchDto> updateBank(@PathVariable Integer branchId, @RequestBody @Valid BankBranchDto bankBranchDto) {
+        return new ResponseEntity<>(bankBranchService.updateBankBranch(branchId, bankBranchDto), HttpStatus.OK);
 
     }
 
     @GetMapping("search")
-    public ResponseEntity<HttpResponse> getBank(@RequestParam(value = "pageNo", defaultValue = "0", required = false) Integer pageNo,
+    public ResponseEntity<HttpResponse> getBank(@RequestParam(value = "pageNo", defaultValue = "0"  , required = false) Integer pageNo,
                                                 @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
                                                 @RequestParam(value = "sortBy", defaultValue = "branchId", required = false) String sortBy,
                                                 @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection,
@@ -48,15 +49,13 @@ public class BankBranchController {
         return new ResponseEntity<>(bankBranchService.deleteBankBranch(bankBranchId), HttpStatus.OK);
     }
     @GetMapping("all")
-    public ResponseEntity<List<BankBranchDto>> getAllBankBranch(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-                                                    @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
-                                                    @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
-                                                    @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection) {
-
-        return new ResponseEntity<>(bankBranchService.getAllBankBranch(pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
-
-
-    } @PostMapping("/csv")
+    public ResponseEntity<List<BankBranchDto>> getAllDistricts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+                                                             @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
+                                                             @RequestParam(value = "sortBy", defaultValue = "branchId", required = false) String sortBy,
+                                                             @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection) {
+        return new ResponseEntity<>(bankBranchService.getAllBankBranch(pageNumber, pageSize, sortBy, sortDirection), HttpStatus.FOUND);
+    }
+    @PostMapping("/csv")
     public ResponseEntity<String> uploadBankCSV(@RequestParam MultipartFile file) throws IOException {
         return new ResponseEntity<>(bankBranchService.uploadBankBranchCSV(file),HttpStatus.OK);
     }

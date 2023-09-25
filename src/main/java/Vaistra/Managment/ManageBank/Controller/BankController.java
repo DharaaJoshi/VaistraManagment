@@ -39,7 +39,7 @@ public class BankController {
 
     }
 
-    @GetMapping
+    @GetMapping("search")
     public ResponseEntity<HttpResponse> getBankByKeyword(@RequestParam(value = "pageNo", defaultValue = "0", required = false) Integer pageNo,
                                                          @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
                                                          @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,

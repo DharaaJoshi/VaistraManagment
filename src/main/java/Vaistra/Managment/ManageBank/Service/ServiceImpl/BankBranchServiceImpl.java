@@ -97,23 +97,23 @@ public class BankBranchServiceImpl implements BankBranchService {
             throw new DuplicateEntryException("Branch with name '"+bankBranchDto.getBranchName()+"' already exist!");
 
 
-        BankBranch bankBranchCode = bankBranchRepo.findByBranchCode(bankBranchDto.getBranchCode().trim());
-
-        if(bankBranchCode != null ){
-            throw new DuplicateEntryException("Bank Branch Code: " + bankBranchDto.getBranchCode() + " is already exist!");
-        }
-
-        BankBranch bankBranchIFSCCode= bankBranchRepo.findByBranchIfsc(bankBranchDto.getBranchIfsc().trim());
-
-        if(bankBranchIFSCCode != null ){
-            throw new DuplicateEntryException("Bank Branch IFSC Code: " + bankBranchDto.getBranchIfsc() + " is already exist !");
-        }
-
-        BankBranch bankBranchMICRCode = bankBranchRepo.findByBranchMicr(bankBranchDto.getBranchMicr().trim());
-
-        if(bankBranchMICRCode != null ){
-            throw new DuplicateEntryException("Bank Branch MICR Code: " + bankBranchDto.getBranchMicr() + " is already exist !");
-        }
+//        BankBranch bankBranchCode = bankBranchRepo.findByBranchCode(bankBranchDto.getBranchCode().trim());
+//
+//        if(bankBranchCode != null ){
+//            throw new DuplicateEntryException("Bank Branch Code: " + bankBranchDto.getBranchCode() + " is already exist!");
+//        }
+//
+//        BankBranch bankBranchIFSCCode= bankBranchRepo.findByBranchIfsc(bankBranchDto.getBranchIfsc().trim());
+//
+//        if(bankBranchIFSCCode != null ){
+//            throw new DuplicateEntryException("Bank Branch IFSC Code: " + bankBranchDto.getBranchIfsc() + " is already exist !");
+//        }
+//
+//        BankBranch bankBranchMICRCode = bankBranchRepo.findByBranchMicr(bankBranchDto.getBranchMicr().trim());
+//
+//        if(bankBranchMICRCode != null ){
+//            throw new DuplicateEntryException("Bank Branch MICR Code: " + bankBranchDto.getBranchMicr() + " is already exist !");
+//        }
         Bank bank = bankRepo.findById(bankBranchDto.getBankId()).orElseThrow(()->new ResourceNotFoundException("Bank not found with  id: " + bankBranchDto.getBankId()));
         State state = stateRepo.findById(bankBranchDto.getStateId()).orElseThrow(()->new ResourceNotFoundException("State not found with  id: " + bankBranchDto.getStateId()));
         District district = districtRepo.findById(bankBranchDto.getDistrictId()).orElseThrow(()->new ResourceNotFoundException("District not found with  id: " + bankBranchDto.getDistrictId()));
@@ -173,8 +173,8 @@ public class BankBranchServiceImpl implements BankBranchService {
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-        Page<BankBranch> pageBankBranch = bankBranchRepo.findAll(pageable);
-        return appUtils.bankBranchesToDtos(pageBankBranch.getContent());
+        Page<BankBranch> pageDistrict = bankBranchRepo.findAll(pageable);
+        return appUtils.bankBranchesToDtos(pageDistrict.getContent());
     }
     public String uploadBankBranchCSV(MultipartFile file)  {
 
@@ -201,43 +201,16 @@ public class BankBranchServiceImpl implements BankBranchService {
                         bankBranch.setIsActive(Boolean.parseBoolean(record.get(7)));
                         bankBranch.setToTiming(LocalTime.parse(record.get(8)));
 
+
                         String stateName = record.get(11).trim();
-
                         State state = stateRepo.findByStateName(stateName);
-                        if(state == null){
-                            state = new State();
-                            state.setStateName(stateName.trim());
-                            state.setStatus(true);
-
-                            String disName= record.get(10).trim();
-
-                            District dis = districtRepo.findByDistrictName(disName);
-
-                            if (dis == null) {
-                                dis = new District();
-                                dis.setDistrictName(disName.trim());
-                                dis.setStatus(true);
-                                districtRepo.save(dis);
-                            }
-
-                            dis.setDistrictName(disName);
-                            districtRepo.save(dis);
-
-                        }
-                        String BankName = record.get(9).trim();
-
-                        Bank bank = bankRepo.findByBankName(BankName);
-
-                        if (bank == null) {
-                            bank = new Bank();
-                            bank.setBankName(BankName.trim());
-
-                            bankRepo.save(bank);
-                        }
-
-                        bankBranch.setDistrict();
-                        bankBranch.setBank(state);
-
+                        String bankName = record.get(9).trim();
+                        Bank bank = bankRepo.findByBankName(bankName);
+                        String districtName=record.get(10).trim();
+                        District district=districtRepo.findByDistrictName(districtName);
+                        bankBranch.setBank(bank);
+                        bankBranch.setDistrict(district);
+                        bankBranch.setState(state);
                             return bankBranch;
                     })
                     .toList();
